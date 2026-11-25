@@ -86,7 +86,7 @@ export const defaultConfig: ResumeConfig = {
       name: "交互式简历模板",
       description: "基于桌面场景的交互式个人简历网站，参加 Qoder 高校创造力大赛",
       technologies: ["Next.js", "TypeScript", "Tailwind CSS", "Framer Motion"],
-      image: "/images/project-resume.jpg",
+      image: "/images/project-resume.svg",
       url: "https://yoursite.com",
       github: "https://github.com/your-username/interactive-resume-template",
       featured: true,

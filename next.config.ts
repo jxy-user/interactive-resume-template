@@ -6,16 +6,9 @@ const nextConfig: NextConfig = {
   trailingSlash: true,
   skipTrailingSlashRedirect: true,
 
-  // 图片优化配置
+  // 图片优化配置（静态导出，不依赖外部图床）
   images: {
-    unoptimized: true, // 静态导出需要
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "**",
-      },
-    ],
-    formats: ["image/avif", "image/webp"],
+    unoptimized: true,
   },
 
   // 实验性功能
@@ -39,42 +32,6 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_APP_VERSION: "1.0.0",
   },
 
-  // 重定向配置（可选）
-  async redirects() {
-    return [];
-  },
-
-  // 头部配置
-  async headers() {
-    return [
-      {
-        source: "/:path*",
-        headers: [
-          {
-            key: "X-DNS-Prefetch-Control",
-            value: "on",
-          },
-          {
-            key: "X-Content-Type-Options",
-            value: "nosniff",
-          },
-          {
-            key: "Referrer-Policy",
-            value: "origin-when-cross-origin",
-          },
-        ],
-      },
-      {
-        source: "/images/:path*",
-        headers: [
-          {
-            key: "Cache-Control",
-            value: "public, max-age=31536000, immutable",
-          },
-        ],
-      },
-    ];
-  },
 };
 
 export default nextConfig;

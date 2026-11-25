@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@source not "../../out";
 
 @theme {
   --color-background: 222.2 84% 4.9%;
@@ -54,6 +55,8 @@
   body {
     background-color: hsl(var(--color-background));
     color: hsl(var(--color-foreground));
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+      "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
   html {
@@ -104,11 +107,8 @@
 
 /* 焦点可见样式 */
 :focus-visible {
-  outline: none;
-  ring: 2px;
-  ring-color: hsl(var(--color-primary));
-  ring-offset: 2px;
-  ring-offset-color: hsl(var(--color-background));
+  outline: 2px solid hsl(var(--color-primary));
+  outline-offset: 2px;
 }
 
 /* 打印样式 */

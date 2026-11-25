@@ -35,6 +35,7 @@ export interface WindowState {
   width: number;
   height: number;
   zIndex: number;
+  isOpen: boolean;
   isMinimized: boolean;
   isMaximized: boolean;
   isActive: boolean;

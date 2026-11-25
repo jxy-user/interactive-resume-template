@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import type { WindowState, WindowId } from "@/types/desktop";
 import { windowVariants } from "@/lib/animations";
 import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 interface WindowProps {
   window: WindowState;
@@ -18,7 +19,6 @@ interface WindowProps {
   };
   children: React.ReactNode;
   onClose: (id: WindowId) => void;
-  onMinimize: (id: WindowId) => void;
   onMaximize: (id: WindowId) => void;
   onRestore: (id: WindowId) => void;
   onPositionChange: (id: WindowId, x: number, y: number) => void;
@@ -35,7 +35,6 @@ export function Window({
   config,
   children,
   onClose,
-  onMinimize,
   onMaximize,
   onRestore,
   onPositionChange,
@@ -48,15 +47,12 @@ export function Window({
   const [resizeDirection, setResizeDirection] = useState<string | null>(null);
   const windowRef = useRef<HTMLDivElement>(null);
   const [borderSize, setBorderSize] = useState(4); // 调整大小边框宽度
+  const isMobile = useIsMobile();
 
-  // 计算样式
-  const windowStyle: React.CSSProperties = {
-    left: win.x,
-    top: win.y,
-    width: win.width,
-    height: win.height,
-    zIndex: win.zIndex,
-  };
+  // 计算样式：小屏时窗口占满可视区域，避免固定坐标溢出
+  const windowStyle: React.CSSProperties = isMobile
+    ? { left: 0, top: 0, width: "100%", height: "100%", zIndex: win.zIndex }
+    : { left: win.x, top: win.y, width: win.width, height: win.height, zIndex: win.zIndex };
 
   const headerHeight = 32;
   const resizeHandleSize = borderSize;
@@ -65,12 +61,13 @@ export function Window({
 
   const handleHeaderMouseDown = useCallback(
     (e: React.MouseEvent) => {
+      if (isMobile) return;
       if (e.target instanceof HTMLElement && (e.target as HTMLElement).closest("[data-resize-handle]")) {
         return;
       }
       onStartDrag(config.id, e as React.MouseEvent);
     },
-    [config.id, onStartDrag]
+    [config.id, isMobile, onStartDrag]
   );
 
   const handleResizeMouseDown = useCallback(
@@ -81,7 +78,6 @@ export function Window({
   );
 
   const handleClose = () => onClose(config.id);
-  const handleMinimize = () => onMinimize(config.id);
   const handleMaximize = () => onMaximize(config.id);
   const handleRestore = () => onRestore(config.id);
 
@@ -95,9 +91,11 @@ export function Window({
       <motion.div
         ref={windowRef}
         className={cn(
-          "fixed flex flex-col z-50 select-none transition-all duration-100",
+          "fixed flex flex-col z-50 select-none transition-all duration-100 pointer-events-auto",
           win.isMinimized && "hidden",
-          win.isMaximized ? "top-0 left-0 w-full h-full max-w-full max-h-full rounded-none shadow-2xl" : "rounded-2xl shadow-2xl bg-card border border-border"
+          win.isMaximized || isMobile
+            ? "top-0 left-0 w-full h-full max-w-full max-h-full rounded-none shadow-2xl bg-card border border-border"
+            : "rounded-2xl shadow-2xl bg-card border border-border"
         )}
         style={windowStyle}
         onClick={handleClick}
@@ -115,31 +113,14 @@ export function Window({
             <span className="text-xs font-medium truncate max-w-[200px]">{config.title}</span>
           </div>
           <div className="flex items-center gap-1">
-            <button
-              onClick={handleMinimize}
-              className="p-1 hover:bg-accent rounded-md transition-colors text-xs"
-              title="最小化"
-              aria-label="最小化"
-            >
-              −
-            </button>
-            {isMaximized ? (
+            {!isMobile && (
               <button
-                onClick={handleRestore}
+                onClick={isMaximized ? handleRestore : handleMaximize}
                 className="p-1 hover:bg-accent rounded-md transition-colors text-xs"
-                title="还原"
-                aria-label="还原"
+                title={isMaximized ? "还原" : "最大化"}
+                aria-label={isMaximized ? "还原" : "最大化"}
               >
-                □
-              </button>
-            ) : (
-              <button
-                onClick={handleMaximize}
-                className="p-1 hover:bg-accent rounded-md transition-colors text-xs"
-                title="最大化"
-                aria-label="最大化"
-              >
-                ⧉
+                {isMaximized ? "□" : "⧉"}
               </button>
             )}
             <button
@@ -158,7 +139,7 @@ export function Window({
           {children}
 
           {/* 调整大小手柄 */}
-          {!isMaximized && (
+          {!isMaximized && !isMobile && (
             <>
               {/* 右侧 */}
               <div

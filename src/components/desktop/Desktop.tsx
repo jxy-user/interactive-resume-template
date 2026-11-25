@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useState, useCallback, Suspense } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import Image from "next/image";
 import { useWindow } from "@/hooks/useWindow";
 import { Window } from "@/components/desktop/Window";
 import { DesktopIcon } from "@/components/desktop/DesktopIcon";
-import { defaultWindowConfigs } from "@/hooks/useWindow";
+import { defaultWindowConfigs } from "@/lib/windowConfigs";
 import type { DesktopIcon as DesktopIconType } from "@/types/desktop";
 
 // 桌面图标配置
@@ -35,10 +35,8 @@ const AppComponents: Record<string, React.ComponentType<any>> = {
 export function Desktop() {
   const {
     windows,
-    activeWindow,
     openWindow,
     closeWindow,
-    minimizeWindow,
     maximizeWindow,
     restoreWindow,
     setWindowPosition,
@@ -68,8 +66,8 @@ export function Desktop() {
   );
 
   // 打开桌面图标对应的窗口
-  const handleOpenIcon = useCallback((windowId: string) => {
-    openWindow(windowId as any);
+  const handleOpenIcon = useCallback((windowId: DesktopIconType["windowId"]) => {
+    openWindow(windowId);
     closeContextMenu();
   }, [openWindow, closeContextMenu]);
 
@@ -80,11 +78,18 @@ export function Desktop() {
       onContextMenu={handleDesktopClick}
     >
       {/* 壁纸背景 */}
-      <div className="absolute inset-0 z-0 bg-[url('/images/wallpaper.svg')] bg-cover bg-center opacity-60" />
+      <Image
+        src="/images/wallpaper.svg"
+        alt=""
+        fill
+        priority
+        aria-hidden="true"
+        className="z-0 object-cover opacity-60"
+      />
       <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/40 to-black/10" />
 
       {/* 桌面图标区域 */}
-      <div className="relative z-20 h-full p-4">
+      <div className="relative z-20 h-full p-3 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 content-start">
         {desktopIcons.map((icon) => (
           <DesktopIcon
             key={icon.id}
@@ -96,25 +101,18 @@ export function Desktop() {
       </div>
 
       {/* 窗口区域 */}
-      <div className="relative z-30 h-full overflow-hidden">
-        <AnimatePresence>
-          {Object.values(windows).map((win) => {
+      <div className="relative z-30 h-full overflow-hidden pointer-events-none">
+        {Object.values(windows).filter((win) => win.isOpen).map((win) => {
             const config = defaultWindowConfigs[win.id];
             const AppComponent = AppComponents[config.component];
 
             return (
-              <motion.div
-                key={win.id}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-              >
+              <div key={win.id}>
                 {win.isMinimized ? null : (
                   <Window
                     window={win}
                     config={config}
                     onClose={closeWindow}
-                    onMinimize={minimizeWindow}
                     onMaximize={maximizeWindow}
                     onRestore={restoreWindow}
                     onPositionChange={setWindowPosition}
@@ -133,10 +131,9 @@ export function Desktop() {
                     )}
                   </Window>
                 )}
-              </motion.div>
+              </div>
             );
           })}
-        </AnimatePresence>
       </div>
 
       {/* 右键菜单 */}
