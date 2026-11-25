@@ -1,0 +1,172 @@
+{
+  "meta": {
+    "name": "张三",
+    "title": "全栈开发工程师 (Full-Stack Developer)",
+    "avatar": "/images/avatar.jpg",
+    "email": "zhangsan@example.com",
+    "phone": "+86 138-0000-0000",
+    "location": "北京, 中国",
+    "website": "https://zhangsan.dev",
+    "github": "zhangsan",
+    "linkedin": "zhangsan",
+    "twitter": "zhangsan_dev",
+    "bio": "热爱技术的全栈开发者，致力于构建优秀的数字化产品"
+  },
+  "about": {
+    "summary": "我是一名全栈开发工程师，专注于构建用户友好的 Web 应用程序。擅长现代前端技术栈和后端架构设计，追求代码质量与用户体验的平衡。曾主导多个大型项目从 0 到 1 的建设，在性能优化、工程化、团队协作方面有丰富经验。",
+    "highlights": [
+      "5+ 年全栈开发经验",
+      "主导过 20+ 个商业项目",
+      "GitHub 开源项目累计 1k+ Stars",
+      "曾在顶级技术会议分享经验"
+    ],
+    "skills": [
+      {
+        "category": "前端 (Frontend)",
+        "items": [
+          { "name": "React", "level": 95 },
+          { "name": "TypeScript", "level": 90 },
+          { "name": "Next.js", "level": 90 },
+          { "name": "Tailwind CSS", "level": 85 },
+          { "name": "Vue.js", "level": 80 },
+          { "name": "Webpack/Vite", "level": 80 }
+        ]
+      },
+      {
+        "category": "后端 (Backend)",
+        "items": [
+          { "name": "Node.js", "level": 85 },
+          { "name": "Go", "level": 80 },
+          { "name": "Python", "level": 75 },
+          { "name": "PostgreSQL", "level": 80 },
+          { "name": "Redis", "level": 75 },
+          { "name": "Docker", "level": 80 }
+        ]
+      },
+      {
+        "category": "工程化 & 运维 (DevOps)",
+        "items": [
+          { "name": "Git/GitHub Actions", "level": 90 },
+          { "name": "CI/CD", "level": 85 },
+          { "name": "Kubernetes", "level": 65 },
+          { "name": "AWS/GCP", "level": 60 },
+          { "name": "监控告警", "level": 70 }
+        ]
+      }
+    ]
+  },
+  "education": [
+    {
+      "school": "清华大学",
+      "degree": "硕士",
+      "major": "计算机科学与技术",
+      "startDate": "2019-09",
+      "endDate": "2022-06",
+      "gpa": "3.9/4.0",
+      "honors": ["国家奖学金", "优秀毕业生", "校长奖学金"],
+      "description": "研究方向：分布式系统与云计算，发表论文 3 篇"
+    },
+    {
+      "school": "北京大学",
+      "degree": "本科",
+      "major": "软件工程",
+      "startDate": "2015-09",
+      "endDate": "2019-06",
+      "gpa": "3.8/4.0",
+      "honors": ["优秀学生干部", "ACM 区域赛金牌"],
+      "description": "主修软件工程，辅修数学，核心课程全 A"
+    }
+  ],
+  "experience": [
+    {
+      "company": "字节跳动",
+      "position": "高级前端开发工程师",
+      "startDate": "2022-07",
+      "endDate": "至今",
+      "location": "北京",
+      "description": [
+        "主导飞书文档编辑器核心模块重构，性能提升 50%",
+        "设计并实现跨端组件库，支撑 10+ 业务线",
+        "推动前端工程化体系建设，构建统一脚手架与监控平台",
+        "指导 3 名初级工程师，建立代码评审与技术分享机制"
+      ],
+      "technologies": ["React", "TypeScript", "Monorepo", "Turborepo", "Jest", "Storybook"],
+      "url": "https://feishu.cn"
+    },
+    {
+      "company": "美团",
+      "position": "全栈开发工程师",
+      "startDate": "2020-07",
+      "endDate": "2022-06",
+      "location": "北京",
+      "description": [
+        "负责外卖商家后台核心业务开发与维护",
+        "主导微服务化改造，拆分 5 个核心服务",
+        "优化数据库查询性能，P99 延迟从 500ms 降至 50ms",
+        "建立自动化测试体系，覆盖率提升至 80%+"
+      ],
+      "technologies": ["Vue.js", "Node.js", "Go", "PostgreSQL", "Redis", "Kafka"],
+      "url": "https://meituan.com"
+    }
+  ],
+  "projects": [
+    {
+      "name": "交互式简历模板",
+      "description": "基于桌面场景的交互式个人简历网站模板，支持主题切换、多语言、终端模拟器、彩蛋系统等特色功能",
+      "technologies": ["Next.js 14", "TypeScript", "Tailwind CSS", "Framer Motion"],
+      "image": "/images/project-resume.jpg",
+      "url": "https://resume.zhangsan.dev",
+      "github": "https://github.com/zhangsan/interactive-resume-template",
+      "featured": true
+    },
+    {
+      "name": "开源组件库",
+      "description": "企业级 React 组件库，包含 50+ 高质量组件，支持主题定制、Tree-shaking、无障碍访问",
+      "technologies": ["React", "TypeScript", "Storybook", "Vite", "Testing Library"],
+      "image": "/images/project-ui-lib.jpg",
+      "url": "https://ui.zhangsan.dev",
+      "github": "https://github.com/zhangsan/ui-library",
+      "featured": true
+    },
+    {
+      "name": "实时协作编辑器",
+      "description": "基于 CRDT 算法的实时协作富文本编辑器，支持冲突解决、离线编辑、历史记录",
+      "technologies": ["TypeScript", "Yjs", "WebRTC", "IndexedDB"],
+      "image": "/images/project-editor.jpg",
+      "url": "https://editor.zhangsan.dev",
+      "github": "https://github.com/zhangsan/collaborative-editor",
+      "featured": false
+    }
+  ],
+  "writing": [
+    {
+      "title": "如何构建高性能的 React 应用",
+      "description": "深度解析 React 渲染机制、性能优化策略与最佳实践",
+      "date": "2024-10-15",
+      "tags": ["React", "性能优化", "最佳实践"],
+      "url": "https://zhangsan.dev/blog/react-performance"
+    },
+    {
+      "title": "TypeScript 类型体操进阶指南",
+      "description": "从基础到高级，掌握 TypeScript 类型系统的强大能力",
+      "date": "2024-08-20",
+      "tags": ["TypeScript", "类型编程"],
+      "url": "https://zhangsan.dev/blog/typescript-advanced"
+    },
+    {
+      "title": "分布式系统中的一致性与共识算法",
+      "description": "Raft、Paxos 算法原理与工程落地实践",
+      "date": "2024-05-10",
+      "tags": ["分布式系统", "算法", "架构设计"],
+      "url": "https://zhangsan.dev/blog/distributed-consensus"
+    }
+  ],
+  "theme": {
+    "mode": "dark",
+    "primaryColor": "#3b82f6"
+  },
+  "i18n": {
+    "defaultLang": "zh",
+    "supportedLangs": ["zh", "en"]
+  }
+}

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <circle cx="100" cy="100" r="100" fill="#3b82f6"/>
+  <circle cx="100" cy="75" r="35" fill="white" opacity="0.3"/>
+  <ellipse cx="100" cy="180" rx="55" ry="45" fill="white" opacity="0.2"/>
+  <text x="100" y="115" text-anchor="middle" font-family="system-ui" font-size="24" font-weight="bold" fill="white" opacity="0.8">用户</text>
+</svg>
