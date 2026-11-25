@@ -1,4 +1,5 @@
 export type WindowId =
+  | "museum"
   | "about"
   | "education"
   | "experience"

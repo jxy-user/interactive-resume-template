@@ -1,6 +1,16 @@
 import type { WindowConfig, WindowId } from '../types/desktop';
 
 export const defaultWindowConfigs: Record<WindowId, WindowConfig> = {
+  museum: {
+    id: 'museum',
+    title: '数字展厅',
+    icon: '🏛️',
+    width: 1200,
+    height: 800,
+    minWidth: 800,
+    minHeight: 600,
+    component: 'MuseumApp',
+  },
   about: {
     id: 'about',
     title: '关于我',

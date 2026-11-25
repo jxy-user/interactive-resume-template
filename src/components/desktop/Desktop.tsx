@@ -10,18 +10,20 @@ import type { DesktopIcon as DesktopIconType } from "@/types/desktop";
 
 // 桌面图标配置
 const desktopIcons: DesktopIconType[] = [
-  { id: "about", label: "关于我", icon: "👤", windowId: "about", x: 40, y: 40 },
-  { id: "education", label: "教育经历", icon: "📚", windowId: "education", x: 180, y: 40 },
-  { id: "experience", label: "工作经历", icon: "💼", windowId: "experience", x: 320, y: 40 },
-  { id: "skills", label: "技能专长", icon: "🛠️", windowId: "skills", x: 460, y: 40 },
-  { id: "projects", label: "项目作品集", icon: "📦", windowId: "projects", x: 600, y: 40 },
-  { id: "writing", label: "博客文章", icon: "📝", windowId: "writing", x: 740, y: 40 },
-  { id: "contact", label: "联系我", icon: "📱", windowId: "contact", x: 880, y: 40 },
-  { id: "terminal", label: "终端", icon: "💻", windowId: "terminal", x: 1020, y: 40 },
+  { id: "museum", label: "数字展厅", icon: "🏛️", windowId: "museum", x: 40, y: 40 },
+  { id: "about", label: "关于我", icon: "👤", windowId: "about", x: 180, y: 40 },
+  { id: "education", label: "教育经历", icon: "📚", windowId: "education", x: 320, y: 40 },
+  { id: "experience", label: "工作经历", icon: "💼", windowId: "experience", x: 460, y: 40 },
+  { id: "skills", label: "技能专长", icon: "🛠️", windowId: "skills", x: 600, y: 40 },
+  { id: "projects", label: "项目作品集", icon: "📦", windowId: "projects", x: 740, y: 40 },
+  { id: "writing", label: "博客文章", icon: "📝", windowId: "writing", x: 880, y: 40 },
+  { id: "contact", label: "联系我", icon: "📱", windowId: "contact", x: 1020, y: 40 },
+  { id: "terminal", label: "终端", icon: "💻", windowId: "terminal", x: 1160, y: 40 },
 ];
 
 // 组件映射 - 懒加载各应用组件
 const AppComponents: Record<string, React.ComponentType<any>> = {
+  MuseumApp: React.lazy(() => import("@/components/apps/MuseumApp").then((m) => ({ default: m.MuseumApp }))),
   AboutApp: React.lazy(() => import("@/components/apps/AboutApp").then((m) => ({ default: m.AboutApp }))),
   EducationApp: React.lazy(() => import("@/components/apps/EducationApp").then((m) => ({ default: m.EducationApp }))),
   ExperienceApp: React.lazy(() => import("@/components/apps/ExperienceApp").then((m) => ({ default: m.ExperienceApp }))),
