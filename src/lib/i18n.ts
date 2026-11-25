@@ -63,8 +63,8 @@ export const translations: Record<Lang, Record<string, string>> = {
     langEn: "English",
 
     // 彩蛋
-    konamiActivated: "🎉 秘密模式已激活！",
-    konamiDeactivated: "🔒 秘密模式已关闭",
+    konamiActivated: "秘密模式已激活",
+    konamiDeactivated: "秘密模式已关闭",
   },
 
   en: {
@@ -126,8 +126,8 @@ export const translations: Record<Lang, Record<string, string>> = {
     langEn: "English",
 
     // Easter eggs
-    konamiActivated: "🎉 Secret mode activated!",
-    konamiDeactivated: "🔒 Secret mode disabled",
+    konamiActivated: "Secret mode activated",
+    konamiDeactivated: "Secret mode disabled",
   },
 };
 

@@ -2,23 +2,24 @@
 
 import React, { useState, useCallback, Suspense } from "react";
 import Image from "next/image";
+import { Monitor, RefreshCw, Palette } from "lucide-react";
 import { useWindow } from "@/hooks/useWindow";
 import { Window } from "@/components/desktop/Window";
 import { DesktopIcon } from "@/components/desktop/DesktopIcon";
 import { defaultWindowConfigs } from "@/lib/windowConfigs";
 import type { DesktopIcon as DesktopIconType } from "@/types/desktop";
 
-// 桌面图标配置
+// 桌面展签配置 —— 图标视觉由 windowIcons 统一映射
 const desktopIcons: DesktopIconType[] = [
-  { id: "museum", label: "数字展厅", icon: "🏛️", windowId: "museum", x: 40, y: 40 },
-  { id: "about", label: "关于我", icon: "👤", windowId: "about", x: 180, y: 40 },
-  { id: "education", label: "教育经历", icon: "📚", windowId: "education", x: 320, y: 40 },
-  { id: "experience", label: "工作经历", icon: "💼", windowId: "experience", x: 460, y: 40 },
-  { id: "skills", label: "技能专长", icon: "🛠️", windowId: "skills", x: 600, y: 40 },
-  { id: "projects", label: "项目作品集", icon: "📦", windowId: "projects", x: 740, y: 40 },
-  { id: "writing", label: "博客文章", icon: "📝", windowId: "writing", x: 880, y: 40 },
-  { id: "contact", label: "联系我", icon: "📱", windowId: "contact", x: 1020, y: 40 },
-  { id: "terminal", label: "终端", icon: "💻", windowId: "terminal", x: 1160, y: 40 },
+  { id: "museum", label: "数字展厅", windowId: "museum", x: 40, y: 40 },
+  { id: "about", label: "关于我", windowId: "about", x: 180, y: 40 },
+  { id: "education", label: "教育经历", windowId: "education", x: 320, y: 40 },
+  { id: "experience", label: "工作经历", windowId: "experience", x: 460, y: 40 },
+  { id: "skills", label: "技能专长", windowId: "skills", x: 600, y: 40 },
+  { id: "projects", label: "项目作品集", windowId: "projects", x: 740, y: 40 },
+  { id: "writing", label: "博客文章", windowId: "writing", x: 880, y: 40 },
+  { id: "contact", label: "联系我", windowId: "contact", x: 1020, y: 40 },
+  { id: "terminal", label: "终端", windowId: "terminal", x: 1160, y: 40 },
 ];
 
 // 组件映射 - 懒加载各应用组件
@@ -75,7 +76,7 @@ export function Desktop() {
 
   return (
     <div
-      className="fixed inset-0 bg-gray-900 overflow-hidden flex flex-col"
+      className="fixed inset-0 bg-ink overflow-hidden flex flex-col"
       onClick={handleDesktopClick}
       onContextMenu={handleDesktopClick}
     >
@@ -86,12 +87,12 @@ export function Desktop() {
         fill
         priority
         aria-hidden="true"
-        className="z-0 object-cover opacity-60"
+        className="z-0 object-cover opacity-50"
       />
-      <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/40 to-black/10" />
+      <div className="absolute inset-0 z-10 bg-gradient-to-b from-ink/70 via-ink/40 to-ink/80" />
 
-      {/* 桌面图标区域 */}
-      <div className="relative z-20 h-full p-3 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 content-start">
+      {/* 桌面展签区域 */}
+      <div className="relative z-20 h-full p-4 grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-8 gap-3 content-start">
         {desktopIcons.map((icon) => (
           <DesktopIcon
             key={icon.id}
@@ -125,11 +126,11 @@ export function Desktop() {
                   >
                     {/* 窗口内容 */}
                     {AppComponent ? (
-                      <Suspense fallback={<div className="p-4 text-gray-400 text-sm">组件加载中...</div>}>
+                      <Suspense fallback={<div className="p-4 text-muted-foreground text-sm">组件加载中...</div>}>
                         <AppComponent />
                       </Suspense>
                     ) : (
-                      <div className="p-4 text-gray-400 text-sm">组件加载中...</div>
+                      <div className="p-4 text-muted-foreground text-sm">组件加载中...</div>
                     )}
                   </Window>
                 )}
@@ -141,20 +142,20 @@ export function Desktop() {
       {/* 右键菜单 */}
       {contextMenu && (
         <div
-          className="fixed z-50 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 p-1 min-w-[150px]"
+          className="fixed z-50 bg-card/95 backdrop-blur-md rounded-sm plaque-edge border border-border p-1 min-w-[160px]"
           style={{ left: contextMenu.x, top: contextMenu.y }}
           onClick={closeContextMenu}
         >
-          <div className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
-            🖥️ 桌面
+          <div className="flex items-center gap-2 px-3 py-2 text-sm text-foreground/85 hover:bg-secondary cursor-default">
+            <Monitor size={14} strokeWidth={1.5} aria-hidden="true" /> 桌面
           </div>
-          <div className="h-px bg-gray-200 dark:bg-gray-700 my-1" />
-          <div className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer" onClick={() => { closeContextMenu(); }}>
-            📋 刷新桌面
+          <div className="h-px bg-border my-1" />
+          <div className="flex items-center gap-2 px-3 py-2 text-sm text-foreground/85 hover:bg-secondary cursor-pointer" onClick={() => { closeContextMenu(); }}>
+            <RefreshCw size={14} strokeWidth={1.5} aria-hidden="true" /> 刷新桌面
           </div>
-          <div className="h-px bg-gray-200 dark:bg-gray-700 my-1" />
-          <div className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer" onClick={() => { closeContextMenu(); }}>
-            🎨 个性化设置
+          <div className="h-px bg-border my-1" />
+          <div className="flex items-center gap-2 px-3 py-2 text-sm text-foreground/85 hover:bg-secondary cursor-pointer" onClick={() => { closeContextMenu(); }}>
+            <Palette size={14} strokeWidth={1.5} aria-hidden="true" /> 个性化设置
           </div>
         </div>
       )}

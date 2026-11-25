@@ -2,21 +2,16 @@
 
 import { useState, useCallback, useRef, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import type { WindowState, WindowId } from "@/types/desktop";
+import type { WindowState, WindowId, WindowConfig } from "@/types/desktop";
 import { windowVariants } from "@/lib/animations";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import { windowIcons } from "@/lib/windowIcons";
+import { Maximize2, Minimize2, X } from "lucide-react";
 
 interface WindowProps {
   window: WindowState;
-  config: {
-    id: WindowId;
-    title: string;
-    icon: string;
-    minWidth: number;
-    minHeight: number;
-    component: string;
-  };
+  config: WindowConfig;
   children: React.ReactNode;
   onClose: (id: WindowId) => void;
   onMaximize: (id: WindowId) => void;
@@ -58,6 +53,7 @@ export function Window({
   const resizeHandleSize = borderSize;
 
   const isMaximized = win.isMaximized;
+  const WindowIcon = windowIcons[config.id];
 
   const handleHeaderMouseDown = useCallback(
     (e: React.MouseEvent) => {
@@ -94,8 +90,8 @@ export function Window({
           "fixed flex flex-col z-50 select-none transition-all duration-100 pointer-events-auto",
           win.isMinimized && "hidden",
           win.isMaximized || isMobile
-            ? "top-0 left-0 w-full h-full max-w-full max-h-full rounded-none shadow-2xl bg-card border border-border"
-            : "rounded-2xl shadow-2xl bg-card border border-border"
+            ? "top-0 left-0 w-full h-full max-w-full max-h-full rounded-none bg-card border border-border"
+            : "rounded-md plaque-edge bg-card border border-border"
         )}
         style={windowStyle}
         onClick={handleClick}
@@ -104,32 +100,32 @@ export function Window({
         <div
           className={cn(
             "flex items-center justify-between px-3 py-1.5 cursor-default",
-            isMaximized ? "bg-card" : "bg-card/80 backdrop-blur-md border-b border-border/50"
+            isMaximized ? "bg-card" : "bg-card/85 backdrop-blur-md border-b border-border"
           )}
           onMouseDown={handleHeaderMouseDown}
         >
-          <div className="flex items-center gap-2">
-            <span className="text-xs">{config.icon}</span>
-            <span className="text-xs font-medium truncate max-w-[200px]">{config.title}</span>
+          <div className="flex items-center gap-2 min-w-0">
+            <WindowIcon size={13} strokeWidth={1.5} className="text-primary shrink-0" aria-hidden="true" />
+            <span className="font-display text-[13px] truncate max-w-[200px]">{config.title}</span>
           </div>
           <div className="flex items-center gap-1">
             {!isMobile && (
               <button
                 onClick={isMaximized ? handleRestore : handleMaximize}
-                className="p-1 hover:bg-accent rounded-md transition-colors text-xs"
+                className="p-1 hover:bg-secondary rounded-sm transition-colors text-muted-foreground hover:text-foreground"
                 title={isMaximized ? "还原" : "最大化"}
                 aria-label={isMaximized ? "还原" : "最大化"}
               >
-                {isMaximized ? "□" : "⧉"}
+                {isMaximized ? <Minimize2 size={13} strokeWidth={1.5} /> : <Maximize2 size={13} strokeWidth={1.5} />}
               </button>
             )}
             <button
               onClick={handleClose}
-              className="p-1 hover:bg-red-500 hover:text-white rounded-md transition-colors text-xs"
+              className="p-1 hover:bg-destructive hover:text-destructive-foreground rounded-sm transition-colors text-muted-foreground"
               title="关闭"
               aria-label="关闭"
             >
-              ×
+              <X size={14} strokeWidth={1.75} />
             </button>
           </div>
         </div>

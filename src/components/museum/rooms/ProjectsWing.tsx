@@ -44,7 +44,7 @@ export function ProjectsWing({ config, isActive, onEnter }: ProjectsWingProps) {
     // 地板 - 反射材质
     const floorGeometry = new THREE.PlaneGeometry(40, 30);
     const floorMaterial = new THREE.MeshPhysicalMaterial({
-      color: 0x050810,
+      color: 0x0c0a08,
       metalness: 0.8,
       roughness: 0.05,
       clearcoat: 1,
@@ -59,7 +59,7 @@ export function ProjectsWing({ config, isActive, onEnter }: ProjectsWingProps) {
     // 背景墙 - 深度感
     const backWallGeometry = new THREE.PlaneGeometry(40, 15);
     const backWallMaterial = new THREE.MeshPhysicalMaterial({
-      color: 0x0a0f1a,
+      color: 0x14110c,
       metalness: 0.1,
       roughness: 0.5,
     });
@@ -84,9 +84,9 @@ export function ProjectsWing({ config, isActive, onEnter }: ProjectsWingProps) {
       const z = -2 - row * (cubeSize + gap);
       const y = cubeSize / 2 + 0.5;
 
-      // 随机材质颜色
-      const hue = (i * 0.618033988749895) % 1; // 黄金角度分布
-      const color = new THREE.Color().setHSL(hue, 0.6, 0.4);
+      // 展品色板 —— 铜 / 石青 / 暖白 / 深铜
+      const palette = [0xb5894f, 0x4e7c74, 0xfff3d9, 0x8a6a3b];
+      const color = new THREE.Color(palette[i % palette.length]);
 
       // 创建多层材质效果
       const cubeGroup = new THREE.Group();

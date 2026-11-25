@@ -1,103 +1,149 @@
 {
   "meta": {
-    "name": "你的名字",
-    "title": "全栈开发工程师 (Full-Stack Developer)",
+    "name": "林知远",
+    "title": "创意技术开发者",
     "avatar": "/images/avatar.svg",
     "email": "hello@example.com",
-    "phone": "+86 1xx-xxxx-xxxx",
-    "location": "北京, 中国",
-    "website": "https://yoursite.com",
-    "github": "your-github-username",
-    "linkedin": "your-linkedin-username",
-    "twitter": "your-twitter-handle",
-    "bio": "热爱技术的全栈开发者，致力于构建优秀的数字化产品"
+    "location": "杭州, 中国",
+    "website": "https://example.com",
+    "github": "linzhiyuan",
+    "bio": "把抽象的信息折叠成可以走进去的空间：以 WebGL、动效与排版为材料，做让人愿意多停留一分钟的界面。"
   },
   "about": {
-    "summary": "我是一名全栈开发工程师，专注于构建用户友好的 Web 应用程序。擅长现代前端技术栈和后端架构设计，追求代码质量与用户体验的平衡。",
-    "highlights": ["5+ 年开发经验", "主导过 20+ 个项目", "开源贡献者"],
+    "summary": "我是一名创意技术开发者，习惯把抽象的信息折叠成可以走进去的空间。过去五年，我在产品与艺术之间来回：白天写 React 与着色器，夜里研究展览动线与排版。\n\n我相信好的界面应当像一座好的博物馆——有明确的入口，有克制的光线，有让人愿意多停留一分钟的理由。这份网站本身就是一次策展练习：把一段并不传奇的职业轨迹，当作展品来布置。",
+    "highlights": [
+      "五年创意前端与 WebGL 经验",
+      "主导三个获行业奖项的交互项目",
+      "开源六个可视化与动效工具",
+      "长期写作者，累计十二万字设计笔记"
+    ],
     "skills": [
       {
-        "category": "前端 (Frontend)",
+        "category": "前端 Frontend",
         "items": [
-          { "name": "React", "level": 90 },
-          { "name": "TypeScript", "level": 85 },
+          { "name": "React", "level": 92 },
+          { "name": "TypeScript", "level": 88 },
           { "name": "Next.js", "level": 85 },
-          { "name": "Tailwind CSS", "level": 80 },
-          { "name": "Vue.js", "level": 75 }
+          { "name": "Tailwind CSS", "level": 90 },
+          { "name": "Three.js", "level": 82 },
+          { "name": "Framer Motion", "level": 85 }
         ]
       },
       {
-        "category": "后端 (Backend)",
+        "category": "视觉与动效 Visual",
         "items": [
-          { "name": "Node.js", "level": 80 },
-          { "name": "Go", "level": 75 },
-          { "name": "Python", "level": 70 },
-          { "name": "PostgreSQL", "level": 75 },
-          { "name": "Redis", "level": 65 }
+          { "name": "WebGL / GLSL", "level": 78 },
+          { "name": "GSAP", "level": 80 },
+          { "name": "动效设计", "level": 82 },
+          { "name": "数据可视化", "level": 75 },
+          { "name": "排版", "level": 84 }
         ]
       },
       {
-        "category": "工具 (Tools)",
+        "category": "工程 Engineering",
         "items": [
-          { "name": "Git", "level": 85 },
-          { "name": "Docker", "level": 70 },
-          { "name": "AWS", "level": 60 },
-          { "name": "GitHub Actions", "level": 75 }
+          { "name": "Node.js", "level": 72 },
+          { "name": "Vite", "level": 80 },
+          { "name": "CI / CD", "level": 70 },
+          { "name": "性能优化", "level": 78 },
+          { "name": "可访问性", "level": 76 }
         ]
       }
     ]
   },
   "education": [
     {
-      "school": "某某大学",
+      "school": "南山理工大学",
       "degree": "本科",
-      "major": "计算机科学与技术",
-      "startDate": "2018-09",
-      "endDate": "2022-06",
-      "gpa": "3.8/4.0",
-      "honors": ["优秀毕业生", "国家奖学金"],
-      "description": "专注于计算机科学与技术，主修软件工程方向"
+      "major": "数字媒体艺术",
+      "startDate": "2016-09",
+      "endDate": "2020-06",
+      "gpa": "3.7/4.0",
+      "honors": ["优秀毕业设计", "全国大学生数字艺术大赛一等奖"],
+      "description": "以交互设计与生成艺术为方向，毕业设计是一套基于投影的沉浸式叙事装置。"
     }
   ],
   "experience": [
     {
-      "company": "某互联网公司",
-      "position": "高级前端开发工程师",
+      "company": "光合实验室",
+      "position": "高级创意前端工程师",
       "startDate": "2022-07",
       "endDate": "至今",
-      "location": "北京",
+      "location": "杭州",
       "description": [
-        "主导公司核心产品的前端架构设计与开发",
-        "优化首屏加载性能，提升 40%",
-        "带领 3 人前端小组，制定代码规范"
+        "负责品牌互动官网与数字展厅的前端架构",
+        "用 WebGL 重构产品导览，平均停留时长提升 60%",
+        "带领三人小组，建立动效与可访问性规范"
       ],
-      "technologies": ["React", "TypeScript", "Next.js", "Tailwind CSS"],
+      "technologies": ["React", "TypeScript", "Three.js", "GLSL"],
       "url": "https://example.com"
+    },
+    {
+      "company": "远山科技",
+      "position": "前端工程师",
+      "startDate": "2020-07",
+      "endDate": "2022-06",
+      "location": "上海",
+      "description": [
+        "从零参与协作白板产品，负责核心渲染层",
+        "把首屏加载从 3.2 秒压到 1.1 秒",
+        "设计并落地一套跨产品组件库"
+      ],
+      "technologies": ["TypeScript", "Canvas", "WebSocket"]
     }
   ],
   "projects": [
     {
-      "name": "交互式简历模板",
-      "description": "基于桌面场景的交互式个人简历网站，参加 Qoder 高校创造力大赛",
-      "technologies": ["Next.js", "TypeScript", "Tailwind CSS", "Framer Motion"],
-      "image": "/images/project-resume.svg",
-      "url": "https://yoursite.com",
-      "github": "https://github.com/your-username/interactive-resume-template",
+      "name": "光影展厅",
+      "description": "为一场数字艺术展做的入场体验，用着色器、动线与光线讲一个关于「观看」的故事。",
+      "technologies": ["Three.js", "GLSL", "React"],
+      "url": "https://example.com",
+      "github": "https://github.com/linzhiyuan",
       "featured": true
+    },
+    {
+      "name": "折页",
+      "description": "把零散笔记渲染成可以翻阅的书，支持全文检索与双栏对照。",
+      "technologies": ["Next.js", "MDX", "Tailwind CSS"],
+      "url": "https://example.com"
+    },
+    {
+      "name": "粒度",
+      "description": "一套克制的数据可视化组件，强调可读性而非装饰。",
+      "technologies": ["D3", "React", "TypeScript"],
+      "github": "https://github.com/linzhiyuan"
+    },
+    {
+      "name": "静默",
+      "description": "一个几乎无声的专注计时工具，用光影而非提示音提醒你休息。",
+      "technologies": ["Svelte", "Web Audio"]
+    },
+    {
+      "name": "经纬",
+      "description": "用滚动讲述一座城市的变迁，地图随叙事缓慢移动。",
+      "technologies": ["Mapbox", "GSAP", "React"],
+      "url": "https://example.com"
     }
   ],
   "writing": [
     {
-      "title": "如何构建交互式简历网站",
-      "description": "分享构建这款交互式简历模板的设计思路与技术实现",
-      "date": "2026-11-01",
-      "tags": ["前端", "项目经验", "设计"],
-      "url": "https://yoursite.com/blog/interactive-resume"
+      "title": "为什么我把简历做成了一座博物馆",
+      "description": "关于这个网站的策展思路与技术拆解。",
+      "date": "2026-11-20",
+      "tags": ["策展", "设计", "前端"],
+      "url": "https://example.com"
+    },
+    {
+      "title": "克制的动效：从炫技到引导",
+      "description": "一次关于界面动效边界的设计笔记。",
+      "date": "2026-10-08",
+      "tags": ["动效", "设计"],
+      "url": "https://example.com"
     }
   ],
   "theme": {
     "mode": "dark",
-    "primaryColor": "#3b82f6"
+    "primaryColor": "#b5894f"
   },
   "i18n": {
     "defaultLang": "zh",

@@ -137,3 +137,10 @@
   - 展厅内仍有硬编码展示文案，未完全走 `public/resume-config.json` 单源。
   - 3D 动画尚未处理 `prefers-reduced-motion`。
   - G2 内容占位仍未替换。
+
+### 2026-11-25 — 「3D效果2」提交审查
+
+- 结论：**不含新的 3D 效果，不发布。**
+- 证据：`git diff bce82cd c462406 -- src` 仅 4 个文件，均为 Qoder 上一轮修复（技能名归一化 + 展厅 absolute 定位），其余为 `out/` 重建；线上 `/museum` 已是同功能版本。
+- 验证：`npx tsc --noEmit` 通过；`npm test` 6/6 通过。
+- 要求：Claude 明确「3D效果2」的具体目标并实际实现；完成后更新 `STATUS.md` 请求审查。

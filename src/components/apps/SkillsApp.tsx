@@ -8,7 +8,7 @@ import { progressVariants } from "@/lib/animations";
 
 export function SkillsApp() {
   const { config } = useConfig();
-  const { t, lang } = useI18n();
+  const { t } = useI18n();
   const { about } = config;
 
   if (!about?.skills || about.skills.length === 0) {
@@ -21,47 +21,42 @@ export function SkillsApp() {
 
   return (
     <div className="h-full flex flex-col overflow-hidden">
-      <div className="p-4 border-b border-border/50">
-        <h2 className="text-xl font-semibold">{t("skills")}</h2>
+      <div className="px-6 py-4 border-b border-border">
+        <h2 className="font-display text-xl">{t("skills")}</h2>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-6">
+      <div className="flex-1 overflow-y-auto p-6 space-y-4">
         {about.skills.map((category, catIndex) => (
           <motion.div
             key={catIndex}
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: catIndex * 0.1, duration: 0.5 }}
+            transition={{ delay: catIndex * 0.08, duration: 0.4 }}
           >
-            <Card className="bg-white/5 backdrop-blur-md border-border/50">
+            <Card className="bg-card/50 border-border shadow-none rounded-sm">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">{category.category}</CardTitle>
+                <CardTitle className="font-display text-lg">{category.category}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
                   {category.items.map((skill, skillIndex) => (
-                    <motion.div
-                      key={skillIndex}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: catIndex * 0.1 + skillIndex * 0.05, duration: 0.4 }}
-                    >
+                    <div key={skillIndex}>
                       <div className="flex items-center justify-between mb-1">
-                        <span className="text-sm font-medium">{skill.name}</span>
+                        <span className="text-sm">{skill.name}</span>
                         {skill.level !== undefined && (
-                          <span className="text-sm text-muted-foreground">{skill.level}%</span>
+                          <span className="font-plaque text-xs text-muted-foreground">{skill.level}</span>
                         )}
                       </div>
-                      <div className="h-2 bg-muted rounded-full overflow-hidden">
+                      <div className="h-1.5 bg-secondary rounded-sm overflow-hidden">
                         <motion.div
-                          className="h-full bg-primary rounded-full"
+                          className="h-full bg-primary rounded-sm"
                           variants={progressVariants}
                           custom={skill.level || 0}
                           initial="hidden"
                           animate="visible"
                         />
                       </div>
-                    </motion.div>
+                    </div>
                   ))}
                 </div>
               </CardContent>
@@ -71,12 +66,4 @@ export function SkillsApp() {
       </div>
     </div>
   );
-}
-
-// 临时翻译
-function t(key: string): string {
-  const dict: Record<string, string> = {
-    skills: "技能专长",
-  };
-  return dict[key] || key;
 }

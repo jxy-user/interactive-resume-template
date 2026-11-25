@@ -66,7 +66,7 @@ export function SkillsConstellation({ config, isActive, onEnter }: SkillsConstel
           ),
           size: 0.15 + Math.random() * 0.15,
           brightness: 0.5 + Math.random() * 0.5,
-          color: new THREE.Color().setHSL((catIndex * 0.3 + itemIndex * 0.1) % 1, 0.7, 0.5),
+          color: new THREE.Color([0xb5894f, 0x4e7c74, 0xfff3d9, 0x8a6a3b][(catIndex + itemIndex) % 4]),
         };
       });
 
@@ -103,7 +103,7 @@ export function SkillsConstellation({ config, isActive, onEnter }: SkillsConstel
       farPositions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
       farPositions[i * 3 + 2] = radius * Math.cos(phi);
 
-      const color = new THREE.Color().setHSL(Math.random(), 0.5, 0.5 + Math.random() * 0.5);
+      const color = new THREE.Color([0xb5894f, 0x4e7c74, 0xfff3d9][Math.floor(Math.random() * 3)]);
       farColors[i * 3] = color.r;
       farColors[i * 3 + 1] = color.g;
       farColors[i * 3 + 2] = color.b;
@@ -130,7 +130,7 @@ export function SkillsConstellation({ config, isActive, onEnter }: SkillsConstel
     // === 创建技能星座 ===
     const starGeometry = new THREE.SphereGeometry(1, 16, 16);
     const lineMaterial = new THREE.LineBasicMaterial({
-      color: 0x00d4ff,
+      color: 0x4e7c74,
       transparent: true,
       opacity: 0.4,
       blending: THREE.AdditiveBlending,
@@ -140,7 +140,7 @@ export function SkillsConstellation({ config, isActive, onEnter }: SkillsConstel
       // 分类中心标记
       const centerGeometry = new THREE.SphereGeometry(0.3, 16, 16);
       const centerMaterial = new THREE.MeshBasicMaterial({
-        color: constellation.stars[0]?.color || 0x00d4ff,
+        color: constellation.stars[0]?.color || 0x4e7c74,
         transparent: true,
         opacity: 0.8,
         blending: THREE.AdditiveBlending,
@@ -207,7 +207,7 @@ export function SkillsConstellation({ config, isActive, onEnter }: SkillsConstel
     // === 中心引力球 ===
     const coreGeometry = new THREE.SphereGeometry(1.5, 32, 32);
     const coreMaterial = new THREE.MeshPhysicalMaterial({
-      color: 0x0a0f1a,
+      color: 0x0c0a08,
       metalness: 0,
       roughness: 0,
       transmission: 0.9,
@@ -215,7 +215,7 @@ export function SkillsConstellation({ config, isActive, onEnter }: SkillsConstel
       clearcoat: 1,
       clearcoatRoughness: 0,
       ior: 1.5,
-      emissive: 0x00d4ff,
+      emissive: 0x4e7c74,
       emissiveIntensity: 0.2,
     });
     const core = new THREE.Mesh(coreGeometry, coreMaterial);
@@ -226,7 +226,7 @@ export function SkillsConstellation({ config, isActive, onEnter }: SkillsConstel
     for (let i = 0; i < 3; i++) {
       const ringGeometry = new THREE.RingGeometry(2 + i * 0.5, 2.2 + i * 0.5, 64);
       const ringMaterial = new THREE.MeshBasicMaterial({
-        color: 0x00d4ff,
+        color: 0x4e7c74,
         transparent: true,
         opacity: 0.1 / (i + 1),
         side: THREE.DoubleSide,
@@ -284,7 +284,7 @@ export function SkillsConstellation({ config, isActive, onEnter }: SkillsConstel
       className="pointer-events-none"
       occlude
     >
-      <div className="bg-black/50 backdrop-blur-sm px-3 py-1 rounded-full text-white text-xs font-medium border border-white/10 whitespace-nowrap">
+      <div className="bg-ink/60 backdrop-blur-sm px-3 py-1 rounded-sm text-plaster text-xs border border-border whitespace-nowrap font-display">
         {constellation.category}
       </div>
     </Html>
@@ -301,7 +301,7 @@ export function SkillsConstellation({ config, isActive, onEnter }: SkillsConstel
         occlude
       >
         <div
-          className="bg-black/60 backdrop-blur-xl border border-white/10 rounded-lg px-3 py-1.5 text-white text-sm font-medium min-w-[120px] text-center group hover:border-primary/50 hover:bg-primary/10 transition-all duration-300 cursor-pointer"
+          className="bg-ink/70 backdrop-blur-xl border border-border rounded-sm px-3 py-1.5 text-plaster text-sm min-w-[120px] text-center hover:border-primary/60 hover:bg-primary/10 transition-colors cursor-pointer"
           onClick={onEnter}
         >
           {star.name}

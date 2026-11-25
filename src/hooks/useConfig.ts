@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useCallback } from "react";
 import type { ResumeConfig } from "@/types/resume";
-import { defaultConfig } from "@/lib/config";
+import { resume } from "@/lib/resumeData";
 
 interface UseConfigReturn {
   config: ResumeConfig;
@@ -11,37 +11,14 @@ interface UseConfigReturn {
   reload: () => Promise<void>;
 }
 
+/**
+ * 配置读取 —— 内容在构建时由 public/resume-config.json 内联，
+ * 无需运行时 fetch，也没有第二份正文兜底（消除数据双源）。
+ */
 export function useConfig(): UseConfigReturn {
-  const [config, setConfig] = useState<ResumeConfig>(defaultConfig);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const loadConfig = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      const res = await fetch("/resume-config.json", { cache: "no-store" });
-      if (!res.ok) {
-        console.warn("[useConfig] resume-config.json 不存在，使用默认配置");
-        setConfig(defaultConfig);
-        return;
-      }
-      const data = (await res.json()) as Partial<ResumeConfig>;
-      setConfig({ ...defaultConfig, ...data });
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "加载配置失败";
-      console.error("[useConfig] 加载配置失败:", err);
-      setError(message);
-      setConfig(defaultConfig);
-    } finally {
-      setLoading(false);
-    }
+  const reload = useCallback(async () => {
+    // 静态导出：内容随构建更新，运行时无需重新加载
   }, []);
 
-  useEffect(() => {
-    loadConfig();
-  }, [loadConfig]);
-
-  return { config, loading, error, reload: loadConfig };
+  return { config: resume, loading: false, error: null, reload };
 }

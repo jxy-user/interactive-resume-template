@@ -118,9 +118,9 @@ export function FluidBackground() {
   const uniforms = useMemo(() => ({
     uTime: { value: 0 },
     uResolution: { value: resolutionRef.current },
-    uColorA: { value: new THREE.Color(0x0a0f1a) },  // 深空蓝
-    uColorB: { value: new THREE.Color(0x1a1f3a) },  // 午夜蓝
-    uColorC: { value: new THREE.Color(0x2d1b4e) },  // 紫罗兰
+    uColorA: { value: new THREE.Color(0x0c0a08) },  // 暖墨
+    uColorB: { value: new THREE.Color(0x1c1813) },  // 暖褐
+    uColorC: { value: new THREE.Color(0x3a2c1a) },  // 暗铜
   }), []);
 
   // 更新 uniform

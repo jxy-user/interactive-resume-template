@@ -12,6 +12,7 @@ import { ProjectsWing } from "./rooms/ProjectsWing";
 import { SkillsConstellation } from "./rooms/SkillsConstellation";
 import { CameraController } from "./camera/CameraController";
 import { useConfig } from "@/hooks/useConfig";
+import { Landmark, User, Layers, Sparkles } from "lucide-react";
 
 type RoomId = "lobby" | "about" | "projects" | "skills";
 
@@ -77,12 +78,12 @@ function SceneContent({
 }) {
   return (
     <>
-      {/* 全局环境光 */}
-      <ambientLight intensity={0.3} color="#ffffff" />
+      {/* 全局环境光 —— 暖白聚光基调 */}
+      <ambientLight intensity={0.22} color="#fff3d9" />
       <directionalLight
         position={[10, 20, 10]}
-        intensity={2}
-        color="#fff8e7"
+        intensity={1.5}
+        color="#fff3d9"
         castShadow
         shadow-mapSize-width={2048}
         shadow-mapSize-height={2048}
@@ -94,10 +95,11 @@ function SceneContent({
         shadow-camera-bottom={-20}
         shadow-bias={-0.001}
       />
+      {/* 青铜氧化冷补光，替代冰蓝，避免暖场过曝 */}
       <directionalLight
         position={[-5, 10, -5]}
-        intensity={0.5}
-        color="#e7f0ff"
+        intensity={0.4}
+        color="#4e7c74"
         castShadow={false}
       />
 
@@ -173,26 +175,26 @@ function RoomNavigator({
   onRoomChange: (room: string) => void;
 }) {
   const rooms = [
-    { id: "lobby", label: "大厅", icon: "🏛️" },
-    { id: "about", label: "关于我", icon: "👤" },
-    { id: "projects", label: "项目作品", icon: "📦" },
-    { id: "skills", label: "技能星座", icon: "✨" },
+    { id: "lobby", label: "大厅", Icon: Landmark },
+    { id: "about", label: "关于我", Icon: User },
+    { id: "projects", label: "项目作品", Icon: Layers },
+    { id: "skills", label: "技能星座", Icon: Sparkles },
   ];
 
   return (
-    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-40 flex gap-2">
+    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-40 flex gap-1 rounded-sm border border-border bg-ink/70 backdrop-blur-md p-1">
       {rooms.map((room) => (
         <button
           key={room.id}
           onClick={() => onRoomChange(room.id as any)}
-          className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+          className={`flex items-center gap-2 px-4 py-1.5 rounded-sm text-sm transition-colors ${
             currentRoom === room.id
-              ? "bg-primary text-primary-foreground shadow-lg shadow-primary/50 scale-105"
-              : "bg-white/10 backdrop-blur-md text-white/80 hover:bg-white/20 hover:text-white border border-white/10"
+              ? "bg-primary text-primary-foreground"
+              : "text-foreground/70 hover:bg-secondary hover:text-foreground"
           }`}
           style={{ touchAction: "manipulation" }}
         >
-          <span>{room.icon}</span>
+          <room.Icon size={14} strokeWidth={1.5} aria-hidden="true" />
           <span>{room.label}</span>
         </button>
       ))}

@@ -27,7 +27,7 @@ export function Lobby({ config, isActive, onEnter }: LobbyProps) {
     // === 大理石地板 ===
     const floorGeometry = new THREE.CircleGeometry(20, 64);
     const floorMaterial = new THREE.MeshPhysicalMaterial({
-      color: 0x1a1a2e,
+      color: 0x14110c,
       metalness: 0.1,
       roughness: 0.1,
       clearcoat: 0.5,
@@ -44,7 +44,7 @@ export function Lobby({ config, isActive, onEnter }: LobbyProps) {
     // === 中心地板图案 (发光圆环) ===
     const ringGeometry = new THREE.RingGeometry(3, 3.5, 64);
     const ringMaterial = new THREE.MeshBasicMaterial({
-      color: 0x00d4ff,
+      color: 0x4e7c74,
       transparent: true,
       opacity: 0.3,
       side: THREE.DoubleSide,
@@ -58,7 +58,7 @@ export function Lobby({ config, isActive, onEnter }: LobbyProps) {
     // === 周围柱子 ===
     const pillarGeometry = new THREE.CylinderGeometry(0.4, 0.5, 8, 8);
     const pillarMaterial = new THREE.MeshPhysicalMaterial({
-      color: 0x2a2a4a,
+      color: 0x241d14,
       metalness: 0.3,
       roughness: 0.2,
       clearcoat: 0.3,
@@ -79,7 +79,7 @@ export function Lobby({ config, isActive, onEnter }: LobbyProps) {
       // 柱顶发光球
       const orbGeometry = new THREE.SphereGeometry(0.3, 16, 16);
       const orbMaterial = new THREE.MeshBasicMaterial({
-        color: 0x00d4ff,
+        color: 0x4e7c74,
         transparent: true,
         opacity: 0.8,
         blending: THREE.AdditiveBlending,
@@ -134,14 +134,14 @@ export function Lobby({ config, isActive, onEnter }: LobbyProps) {
     // 中心大水晶
     const mainCrystalGeometry = new THREE.OctahedronGeometry(0.4, 1);
     const mainCrystalMaterial = new THREE.MeshPhysicalMaterial({
-      color: 0x00d4ff,
+      color: 0x4e7c74,
       metalness: 0,
       roughness: 0,
       transmission: 1,
       thickness: 1,
       clearcoat: 1,
       ior: 1.6,
-      emissive: 0x00d4ff,
+      emissive: 0x4e7c74,
       emissiveIntensity: 0.3,
     });
     const mainCrystal = new THREE.Mesh(mainCrystalGeometry, mainCrystalMaterial);
@@ -156,9 +156,9 @@ export function Lobby({ config, isActive, onEnter }: LobbyProps) {
     const colors = new Float32Array(particleCount * 3);
     const velocities = new Float32Array(particleCount * 3);
 
-    const color1 = new THREE.Color(0x00d4ff);
-    const color2 = new THREE.Color(0xff00ff);
-    const color3 = new THREE.Color(0xffff00);
+    const color1 = new THREE.Color(0x4e7c74);
+    const color2 = new THREE.Color(0xb5894f);
+    const color3 = new THREE.Color(0xfff3d9);
 
     for (let i = 0; i < particleCount; i++) {
       const r = Math.random() * 18 + 2;
@@ -341,10 +341,10 @@ export function Lobby({ config, isActive, onEnter }: LobbyProps) {
         className="pointer-events-none"
       >
         <div className="text-center">
-          <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-primary via-pink-400 to-yellow-400 bg-clip-text text-transparent animate-fade-in">
+          <h1 className="font-display text-4xl md:text-6xl font-semibold text-plaster">
             欢迎来到数字展厅
           </h1>
-          <p className="text-lg text-white/60 mt-2 max-w-md mx-auto">
+          <p className="text-lg text-plaster/60 mt-2 max-w-md mx-auto">
             探索我的技能、项目与故事。使用底部导航或点击展厅入口自由漫游。
           </p>
         </div>

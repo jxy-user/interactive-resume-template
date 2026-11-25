@@ -133,7 +133,7 @@ const COMMANDS: Record<string, Command> = {
           return config.projects
             .map(
               (proj: any, i: number) =>
-                `${i + 1}. ${proj.name}${proj.featured ? " ⭐" : ""}\n   ${proj.description}\n   技术: ${proj.technologies?.join(", ") || "无"}\n   GitHub: ${proj.github || "无"}\n   预览: ${proj.url || "无"}`
+                `${i + 1}. ${proj.name}${proj.featured ? " [置顶]" : ""}\n   ${proj.description}\n   技术: ${proj.technologies?.join(", ") || "无"}\n   GitHub: ${proj.github || "无"}\n   预览: ${proj.url || "无"}`
             )
             .join("\n\n");
 
@@ -267,8 +267,8 @@ const COMMANDS: Record<string, Command> = {
     usage: "<command>",
     handler: (args) => {
       if (args.length === 0) return "用法: sudo <command>";
-      if (args[0] === "rm -rf /") return "🛑 拒绝执行: 这会删除你的简历数据！";
-      if (args[0] === "make me a sandwich") return "好吧, 这里有个 🥪";
+      if (args[0] === "rm -rf /") return "拒绝执行：这会删除你的简历数据。";
+      if (args[0] === "make me a sandwich") return "好吧，三明治在路上了。";
       return `权限不足: 无法执行 '${args.join(" ")}' (需要管理员权限)`;
     },
   },

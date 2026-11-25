@@ -4,7 +4,6 @@ export const defaultWindowConfigs: Record<WindowId, WindowConfig> = {
   museum: {
     id: 'museum',
     title: '数字展厅',
-    icon: '🏛️',
     width: 1200,
     height: 800,
     minWidth: 800,
@@ -14,7 +13,6 @@ export const defaultWindowConfigs: Record<WindowId, WindowConfig> = {
   about: {
     id: 'about',
     title: '关于我',
-    icon: '👤',
     width: 800,
     height: 600,
     minWidth: 500,
@@ -24,7 +22,6 @@ export const defaultWindowConfigs: Record<WindowId, WindowConfig> = {
   education: {
     id: 'education',
     title: '教育经历',
-    icon: '📚',
     width: 800,
     height: 600,
     minWidth: 500,
@@ -34,7 +31,6 @@ export const defaultWindowConfigs: Record<WindowId, WindowConfig> = {
   experience: {
     id: 'experience',
     title: '工作经历',
-    icon: '💼',
     width: 900,
     height: 650,
     minWidth: 600,
@@ -44,7 +40,6 @@ export const defaultWindowConfigs: Record<WindowId, WindowConfig> = {
   skills: {
     id: 'skills',
     title: '技能专长',
-    icon: '🛠️',
     width: 850,
     height: 650,
     minWidth: 550,
@@ -54,7 +49,6 @@ export const defaultWindowConfigs: Record<WindowId, WindowConfig> = {
   projects: {
     id: 'projects',
     title: '项目作品集',
-    icon: '📦',
     width: 950,
     height: 700,
     minWidth: 650,
@@ -64,7 +58,6 @@ export const defaultWindowConfigs: Record<WindowId, WindowConfig> = {
   writing: {
     id: 'writing',
     title: '博客文章',
-    icon: '📝',
     width: 800,
     height: 600,
     minWidth: 500,
@@ -74,7 +67,6 @@ export const defaultWindowConfigs: Record<WindowId, WindowConfig> = {
   contact: {
     id: 'contact',
     title: '联系我',
-    icon: '📱',
     width: 600,
     height: 550,
     minWidth: 450,
@@ -84,7 +76,6 @@ export const defaultWindowConfigs: Record<WindowId, WindowConfig> = {
   terminal: {
     id: 'terminal',
     title: '终端',
-    icon: '💻',
     width: 900,
     height: 600,
     minWidth: 600,

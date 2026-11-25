@@ -12,7 +12,6 @@ export type WindowId =
 export interface WindowConfig {
   id: WindowId;
   title: string; // 窗口标题
-  icon: string; // 图标 emoji 或组件名
   width: number; // 默认宽度 (px)
   height: number; // 默认高度 (px)
   minWidth: number;
@@ -23,8 +22,7 @@ export interface WindowConfig {
 export interface DesktopIcon {
   id: string;
   label: string; // 标签
-  icon: string; // emoji 图标
-  windowId: WindowId; // 关联窗口
+  windowId: WindowId; // 关联窗口（图标视觉由 windowIcons 映射）
   x: number; // 桌面位置 X
   y: number; // 桌面位置 Y
 }
