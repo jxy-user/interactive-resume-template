@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import {
-  ArrowDown,
+  ArrowRight,
   ArrowUp,
   ArrowUpRight,
   Mail,
@@ -14,22 +14,33 @@ import {
 } from "lucide-react";
 import { resume } from "@/lib/resumeData";
 import { cn } from "@/lib/utils";
+import { Artwork, type ArtworkVariant } from "./Artwork";
 import type { ProjectItem, SkillCategory } from "@/types/resume";
 
 const SECTIONS = [
-  { id: "masthead", numeral: "00", label: "入口" },
-  { id: "statement", numeral: "I", label: "陈述" },
-  { id: "chronicle", numeral: "II", label: "编年" },
-  { id: "collection", numeral: "III", label: "馆藏" },
-  { id: "materials", numeral: "IV", label: "材料" },
-  { id: "exit", numeral: "V", label: "出口" },
+  { id: "entrance", label: "入口" },
+  { id: "portrait", label: "自画像" },
+  { id: "timeline", label: "年表" },
+  { id: "gallery", label: "展厅" },
+  { id: "materials", label: "材料" },
+  { id: "exit", label: "出口" },
 ];
 
 const fmt = (d?: string) => (d ? d.replace("-", ".") : "至今");
 
-// 极淡的胶片颗粒，增加展厅质感的层次，避免纯色平面的廉价感
+const VARIANTS: ArtworkVariant[] = ["dawn", "dusk", "city", "sea", "forest", "moon"];
+const SAMPLE = ["#e8a87c", "#c99a4e", "#c97b5a", "#d9be98", "#a85c42", "#e5c07b"];
+
 const NOISE =
-  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")";
+  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")";
+
+const MOTES = Array.from({ length: 14 }).map((_, i) => ({
+  left: `${(i * 37) % 100}%`,
+  top: `${((i * 53) % 90) + 5}%`,
+  size: 4 + (i % 3) * 2,
+  delay: `${(i % 7) * 1.3}s`,
+  duration: `${10 + (i % 5) * 2}s`,
+}));
 
 interface Entry {
   period: string;
@@ -64,259 +75,313 @@ function buildChronicle(): Entry[] {
 }
 
 export function Exhibition() {
-  const [active, setActive] = useState("masthead");
-  const chronicle = buildChronicle();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const groupOffsets = useRef<Record<string, number>>({});
+  const [maxX, setMaxX] = useState(0);
+  const [active, setActive] = useState("entrance");
 
-  useEffect(() => {
-    const obs = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) setActive(e.target.id);
-        });
-      },
-      { rootMargin: "-45% 0px -45% 0px" }
-    );
-    SECTIONS.forEach((s) => {
-      const el = document.getElementById(s.id);
-      if (el) obs.observe(el);
+  const chronicle = buildChronicle();
+  const projects = resume.projects ?? [];
+
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"],
+  });
+  const x = useTransform(scrollYProgress, [0, 1], [0, -maxX]);
+
+  const measure = useCallback(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    setMaxX(Math.max(0, track.scrollWidth - window.innerWidth));
+    const offs: Record<string, number> = {};
+    track.querySelectorAll<HTMLElement>("[data-group]").forEach((el) => {
+      const g = el.dataset.group;
+      if (g && !(g in offs)) offs[g] = el.offsetLeft;
     });
-    return () => obs.disconnect();
+    groupOffsets.current = offs;
   }, []);
 
-  const scrollTo = (id: string) =>
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+  useEffect(() => {
+    measure();
+    window.addEventListener("resize", measure);
+    const t = window.setTimeout(measure, 400);
+    return () => {
+      window.removeEventListener("resize", measure);
+      window.clearTimeout(t);
+    };
+  }, [measure]);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const y = window.scrollY;
+      const offs = groupOffsets.current;
+      let cur = "entrance";
+      let best = -Infinity;
+      for (const k in offs) {
+        if (offs[k] <= y + window.innerHeight * 0.35 && offs[k] >= best) {
+          best = offs[k];
+          cur = k;
+        }
+      }
+      setActive(cur);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // 深链：#wall-N 定位到第 N 面墙（0 起）
+  useEffect(() => {
+    const m = window.location.hash.match(/^#wall-(\d+)$/);
+    if (!m) return;
+    const idx = Number(m[1]);
+    const t = window.setTimeout(() => {
+      const els = trackRef.current?.querySelectorAll<HTMLElement>("[data-group]");
+      const el = els?.[idx];
+      if (el) window.scrollTo({ top: el.offsetLeft });
+    }, 500);
+    return () => window.clearTimeout(t);
+  }, []);
+
+  const go = (id: string) =>
+    window.scrollTo({ top: groupOffsets.current[id] ?? 0, behavior: "smooth" });
 
   return (
-    <div className="relative bg-ink text-plaster">
-      {/* 展厅聚光背景 */}
+    <div className="relative bg-background text-ink">
+      {/* 画廊暖光背景 */}
       <div className="fixed inset-0 -z-10 pointer-events-none" aria-hidden="true">
         <div
           className="absolute inset-0"
-          style={{
-            background:
-              "radial-gradient(ellipse 80% 50% at 50% -20%, hsl(41 100% 93% / 0.10), transparent)",
-          }}
+          style={{ background: "radial-gradient(ellipse 90% 60% at 50% -10%, #fffbf0 0%, transparent 55%)" }}
         />
         <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "radial-gradient(ellipse at 50% 130%, hsl(34 41% 51% / 0.08), transparent 60%)",
-          }}
+          className="absolute inset-0 opacity-50"
+          style={{ background: "radial-gradient(ellipse at 85% 115%, #f2b98c 0%, transparent 55%)" }}
         />
         <div
-          className="absolute inset-0 opacity-[0.04] mix-blend-soft-light"
-          style={{ backgroundImage: NOISE, backgroundSize: "140px 140px" }}
+          className="absolute inset-0 opacity-[0.03] mix-blend-multiply"
+          style={{ backgroundImage: NOISE, backgroundSize: "160px 160px" }}
         />
+        {MOTES.map((m, i) => (
+          <span
+            key={i}
+            className="absolute rounded-full bg-ochre/60 animate-drift"
+            style={{
+              left: m.left,
+              top: m.top,
+              width: m.size,
+              height: m.size,
+              animationDelay: m.delay,
+              animationDuration: m.duration,
+              filter: "blur(1px)",
+            }}
+          />
+        ))}
       </div>
 
-      {/* 侧边导视 */}
-      <nav
-        aria-label="展厅导航"
-        className="fixed right-6 top-1/2 -translate-y-1/2 z-40 hidden lg:flex flex-col gap-5"
-      >
+      {/* 固定品牌与提示 */}
+      <div className="fixed top-6 left-8 z-40 font-plaque text-xs text-primary">《此人在展》</div>
+      <div className="fixed top-6 right-8 z-40 hidden md:block font-plaque text-[11px] text-ink/45">
+        滚动 · 沿墙游览
+      </div>
+
+      {/* 长廊：滚动驱动横向平移 */}
+      <div ref={containerRef} style={{ height: `calc(100vh + ${maxX}px)` }}>
+        <div className="sticky top-0 h-screen overflow-hidden">
+          <motion.div
+            ref={trackRef}
+            style={{ x }}
+            className="relative flex h-full w-max items-stretch will-change-transform"
+          >
+            <EntranceWall onEnter={() => go("portrait")} />
+            <PortraitWall />
+            {chronicle.map((e, i) => (
+              <TimelineWall key={i} entry={e} index={i} />
+            ))}
+            {projects.map((p, i) => (
+              <GalleryWall key={i} project={p} index={i} />
+            ))}
+            <MaterialsWall skills={resume.about.skills ?? []} />
+            <ExitWall />
+          </motion.div>
+        </div>
+      </div>
+
+      {/* 底部导览 */}
+      <div className="fixed bottom-5 left-1/2 z-40 flex -translate-x-1/2 items-center gap-1 rounded-full border border-border bg-cream/85 px-2 py-1.5 shadow-sm backdrop-blur">
         {SECTIONS.map((s) => (
           <button
             key={s.id}
-            onClick={() => scrollTo(s.id)}
+            onClick={() => go(s.id)}
             className={cn(
-              "group flex items-center justify-end gap-3 font-plaque text-xs transition-colors",
-              active === s.id ? "text-primary" : "text-muted-foreground hover:text-plaster"
+              "rounded-full px-2.5 py-1 font-plaque text-[11px] transition-colors",
+              active === s.id ? "bg-primary text-primary-foreground" : "text-ink/50 hover:text-ink"
             )}
           >
-            <span className="opacity-0 group-hover:opacity-100 transition-opacity">{s.label}</span>
-            <span className="tabular-nums">{s.numeral}</span>
+            {s.label}
           </button>
         ))}
-      </nav>
-
-      <main className="relative">
-        <Masthead />
-        <Statement />
-        <Chronicle entries={chronicle} />
-        <Collection projects={resume.projects ?? []} />
-        <Materials skills={resume.about.skills ?? []} />
-        <Exit />
-      </main>
-
-      <footer className="px-6 md:px-16 lg:px-24 py-10 border-t border-border">
-        <div className="max-w-5xl mx-auto flex flex-col md:flex-row justify-between items-center gap-3 font-plaque text-xs text-muted-foreground">
-          <span>{resume.meta.name}</span>
-          <span>以博物馆的方式，呈现一份简历</span>
-        </div>
-      </footer>
+      </div>
     </div>
   );
 }
 
-/* ---------- 通用元件 ---------- */
+/* ---------- 通用墙 ---------- */
 
-/**
- * 静态容器 —— 内容始终可见。
- * 刻意不做「每段淡入上滑」的滚动动画（生成页面的常见模板感）；
- * 唯一的编排式入场留给首屏 Masthead。
- */
-function Reveal({
+function Wall({
+  group,
+  label,
+  wide,
   children,
   className,
 }: {
+  group: string;
+  label?: string;
+  wide?: boolean;
   children: React.ReactNode;
-  delay?: number;
   className?: string;
 }) {
-  return <div className={className}>{children}</div>;
-}
-
-function SectionHeading({
-  numeral,
-  title,
-  lede,
-}: {
-  numeral: string;
-  title: string;
-  lede?: string;
-}) {
   return (
-    <div className="mb-14">
-      <div className="flex items-baseline gap-4">
-        <span className="font-plaque text-sm text-primary tabular-nums">{numeral}</span>
-        <h2 className="font-display text-4xl md:text-5xl tracking-tight">{title}</h2>
-      </div>
-      {lede && <p className="mt-5 max-w-2xl text-muted-foreground leading-relaxed">{lede}</p>}
-      <div className="mt-8 h-px bg-border" />
-    </div>
+    <section
+      data-group={group}
+      className={cn(
+        "relative h-screen shrink-0 flex flex-col justify-center overflow-hidden border-r border-border/40 px-10 lg:px-16",
+        wide ? "w-[min(94vw,1200px)]" : "w-[min(92vw,820px)]",
+        className
+      )}
+    >
+      {label && (
+        <div className="absolute left-10 lg:left-16 top-10 font-plaque text-[11px] text-primary/80">
+          {label}
+        </div>
+      )}
+      {children}
+    </section>
   );
 }
 
-/* ---------- 展厅 ---------- */
+/* ---------- 入口墙 ---------- */
 
-function Masthead() {
+function EntranceWall({ onEnter }: { onEnter: () => void }) {
   const { meta } = resume;
-  const reduce = useReducedMotion();
   return (
-    <section
-      id="masthead"
-      className="relative min-h-screen flex items-center px-6 md:px-16 lg:px-24 overflow-hidden"
-    >
-      {/* 博物馆拱门线稿 —— 展厅入口的建筑感 */}
-      <svg
-        className="pointer-events-none absolute right-[-4%] top-1/2 hidden -translate-y-1/2 h-[86vh] w-auto text-primary opacity-[0.07] md:block"
-        viewBox="0 0 400 620"
-        fill="none"
-        aria-hidden="true"
-      >
-        <path d="M40 600V240A160 160 0 0 1 360 240V600" stroke="currentColor" strokeWidth="1.2" />
-        <path d="M78 600V250A122 122 0 0 1 322 250V600" stroke="currentColor" strokeWidth="0.9" />
-        <path d="M120 600V270A80 80 0 0 1 280 270V600" stroke="currentColor" strokeWidth="0.7" />
-        <path d="M0 600h400" stroke="currentColor" strokeWidth="1.2" />
-      </svg>
-
-      {/* 顶部聚光 */}
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background: "radial-gradient(ellipse 55% 50% at 32% -8%, hsl(41 100% 93% / 0.10), transparent 60%)",
-        }}
-        aria-hidden="true"
-      />
-
-      <div className="relative max-w-5xl w-full mx-auto">
-        <motion.div
-          initial={reduce ? { opacity: 1 } : { opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, ease: "easeOut" }}
-        >
-          <div className="font-plaque text-sm text-primary mb-8">此人在展 2026</div>
-          <h1 className="font-display text-[clamp(3.5rem,12vw,8.5rem)] leading-[0.88] tracking-tight">
+    <Wall group="entrance" wide label="00 · 入口" className="bg-gradient-to-b from-cream/50 via-transparent to-transparent">
+      <div className="grid grid-cols-[1.05fr_0.95fr] items-center gap-12 w-full">
+        <div>
+          <div className="font-plaque text-sm text-primary mb-5">此人在展 2026</div>
+          <h1 className="font-display text-[clamp(2.6rem,6vw,5rem)] leading-[0.92] text-ink">
             {meta.name}
           </h1>
-          <p className="font-display text-2xl md:text-3xl text-primary mt-7">{meta.title}</p>
-          <div className="mt-10 h-px w-28 bg-primary/60" />
-          <p className="mt-9 max-w-xl text-lg leading-relaxed text-muted-foreground">{meta.bio}</p>
+          <p className="font-hand text-2xl md:text-3xl text-primary mt-4">{meta.title}</p>
+          <div className="mt-6 h-px w-24 bg-clay/60" />
+          <p className="mt-6 max-w-md text-base leading-relaxed text-ink/70">{meta.bio}</p>
 
-          {/* 展签信息条 */}
-          <dl className="mt-11 grid max-w-md grid-cols-3 gap-x-6 font-plaque text-[11px]">
+          <dl className="mt-8 grid max-w-sm grid-cols-3 gap-x-5 font-plaque text-[11px]">
             <div>
               <dt className="text-primary mb-1">展品</dt>
-              <dd className="text-plaster/75">{meta.name}</dd>
+              <dd className="text-ink/70">{meta.name}</dd>
             </div>
             <div>
               <dt className="text-primary mb-1">媒介</dt>
-              <dd className="text-plaster/75">代码 设计 空间</dd>
+              <dd className="text-ink/70">代码 设计 空间</dd>
             </div>
             <div>
               <dt className="text-primary mb-1">年份</dt>
-              <dd className="text-plaster/75">2026</dd>
+              <dd className="text-ink/70">2026</dd>
             </div>
           </dl>
-        </motion.div>
 
-        <motion.button
-          onClick={() => document.getElementById("statement")?.scrollIntoView({ behavior: "smooth" })}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: reduce ? 0 : 1, duration: 0.8 }}
-          className="mt-14 inline-flex items-center gap-2.5 text-sm text-muted-foreground hover:text-plaster transition-colors"
-        >
-          <ArrowDown size={16} strokeWidth={1.5} className="animate-bounce" aria-hidden="true" />
-          <span className="font-plaque text-xs">向下探索</span>
-        </motion.button>
+          <button
+            onClick={onEnter}
+            className="mt-10 inline-flex items-center gap-2 text-sm text-ink/60 hover:text-primary transition-colors"
+          >
+            <ArrowRight size={16} strokeWidth={1.6} aria-hidden="true" />
+            <span className="font-plaque text-xs">走进画廊</span>
+          </button>
+        </div>
+
+        {/* 暖光门洞 + 人物剪影 */}
+        <div className="relative mx-auto w-full max-w-[300px]">
+          <div className="frame relative h-[56vh] max-h-[500px] w-full overflow-hidden rounded-t-full">
+            <div
+              className="absolute inset-0"
+              style={{ background: "linear-gradient(180deg,#fff9e8 0%,#fbd79e 40%,#f2b98c 72%,#e0a878 100%)" }}
+            />
+            <div
+              className="absolute inset-0"
+              style={{ background: "radial-gradient(circle at 50% 32%, #fffbf0 0%, transparent 52%)" }}
+            />
+            <svg
+              className="absolute inset-x-0 bottom-0 h-1/2 w-full"
+              viewBox="0 0 300 200"
+              preserveAspectRatio="none"
+              aria-hidden="true"
+            >
+              <path d="M0 120 Q75 70 150 110 T300 100 V200 H0 Z" fill="#e0a878" opacity="0.9" />
+              <path d="M0 150 Q90 115 180 150 T300 145 V200 H0 Z" fill="#d89a72" />
+            </svg>
+            <svg
+              className="absolute bottom-6 left-1/2 h-44 w-20 -translate-x-1/2 text-ink/70"
+              viewBox="0 0 60 120"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <circle cx="30" cy="16" r="9" />
+              <path d="M21 28 h18 l4 42 h-7 l-3 -18 l-3 18 h-7 Z" />
+              <rect x="24" y="68" width="6" height="36" rx="2" />
+              <rect x="32" y="68" width="6" height="36" rx="2" />
+            </svg>
+          </div>
+          <div className="mx-auto mt-3 h-3 w-3/4 rounded-full bg-clay/30 blur-md" aria-hidden="true" />
+        </div>
       </div>
-    </section>
+    </Wall>
   );
 }
 
-function Statement() {
+/* ---------- 自画像墙 ---------- */
+
+function PortraitWall() {
   const { meta, about } = resume;
   return (
-    <section id="statement" className="py-24 md:py-32 px-6 md:px-16 lg:px-24 border-t border-border">
-      <div className="max-w-5xl mx-auto">
-        <Reveal>
-          <SectionHeading numeral="I" title="策展人陈述" />
-        </Reveal>
-        <div className="grid md:grid-cols-[1.6fr_1fr] gap-10 md:gap-16">
-          <Reveal>
-            <p className="text-lg leading-loose text-plaster/85 whitespace-pre-wrap">{about.summary}</p>
-            {about.highlights && about.highlights.length > 0 && (
-              <ul className="mt-10 space-y-3">
-                {about.highlights.map((h, i) => (
-                  <li key={i} className="flex gap-3 text-muted-foreground">
-                    <span className="text-primary shrink-0" aria-hidden="true">—</span>
-                    <span>{h}</span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </Reveal>
+    <Wall group="portrait" wide label="I · 自画像">
+      <div className="grid grid-cols-[300px_1fr] items-center gap-14 w-full">
+        <figure className="frame rounded-md bg-cream p-3">
+          <div className="overflow-hidden rounded-sm">
+            <Artwork variant="dawn" className="aspect-[4/5] w-full" />
+          </div>
+          <figcaption className="mt-3 text-center font-plaque text-[11px] text-muted-foreground">
+            画像 · {meta.name} · 2026
+          </figcaption>
+        </figure>
 
-          <Reveal delay={0.1}>
-            <aside className="md:border-l md:border-border md:pl-10">
-              <h3 className="font-plaque text-xs text-muted-foreground mb-5">档案</h3>
-              <dl className="space-y-4 text-sm">
-                <Info icon={Mail} label="邮箱" href={`mailto:${meta.email}`} value={meta.email} />
-                {meta.location && <Info icon={MapPin} label="驻地" value={meta.location} />}
-                {meta.website && (
-                  <Info
-                    icon={Globe}
-                    label="网站"
-                    href={meta.website}
-                    value={meta.website.replace(/^https?:\/\//, "")}
-                  />
-                )}
-                {meta.github && (
-                  <Info
-                    icon={Code2}
-                    label="代码"
-                    href={`https://github.com/${meta.github}`}
-                    value={`github.com/${meta.github}`}
-                  />
-                )}
-              </dl>
-            </aside>
-          </Reveal>
+        <div>
+          <p className="text-lg leading-loose text-ink/80 whitespace-pre-wrap">{about.summary}</p>
+          {about.highlights && about.highlights.length > 0 && (
+            <ul className="mt-7 grid grid-cols-2 gap-x-8 gap-y-2">
+              {about.highlights.map((h, i) => (
+                <li key={i} className="flex gap-2.5 text-sm text-ink/70">
+                  <span className="text-primary shrink-0" aria-hidden="true">—</span>
+                  <span>{h}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          <dl className="mt-8 grid grid-cols-2 gap-5 border-t border-border pt-6 text-sm">
+            <Info icon={Mail} label="邮箱" href={`mailto:${meta.email}`} value={meta.email} />
+            {meta.location && <Info icon={MapPin} label="驻地" value={meta.location} />}
+            {meta.website && (
+              <Info icon={Globe} label="网站" href={meta.website} value={meta.website.replace(/^https?:\/\//, "")} />
+            )}
+            {meta.github && (
+              <Info icon={Code2} label="代码" href={`https://github.com/${meta.github}`} value={`github.com/${meta.github}`} />
+            )}
+          </dl>
         </div>
       </div>
-    </section>
+    </Wall>
   );
 }
 
@@ -334,8 +399,8 @@ function Info({
   const inner = (
     <>
       <dt className="font-plaque text-[11px] text-muted-foreground mb-1">{label}</dt>
-      <dd className="flex items-center gap-2 text-plaster/85 group-hover:text-primary transition-colors">
-        <Icon size={14} strokeWidth={1.5} className="text-primary shrink-0" aria-hidden="true" />
+      <dd className="flex items-center gap-2 text-ink/80 group-hover:text-primary transition-colors">
+        <Icon size={14} strokeWidth={1.6} className="text-primary shrink-0" aria-hidden="true" />
         <span className="truncate">{value}</span>
       </dd>
     </>
@@ -349,195 +414,171 @@ function Info({
   );
 }
 
-function Chronicle({ entries }: { entries: Entry[] }) {
-  if (entries.length === 0) return null;
+/* ---------- 年表墙 ---------- */
+
+function TimelineWall({ entry, index }: { entry: Entry; index: number }) {
   return (
-    <section id="chronicle" className="py-24 md:py-32 px-6 md:px-16 lg:px-24 border-t border-border">
-      <div className="max-w-5xl mx-auto">
-        <Reveal>
-          <SectionHeading
-            numeral="II"
-            title="编年"
-            lede="按时间展开的工作与教育轨迹，如同展览墙上的一条年表。"
-          />
-        </Reveal>
-        <ol className="relative ml-3 border-l border-border">
-          {entries.map((e, i) => (
-            <li key={i} className="relative pl-8 md:pl-12 pb-12 last:pb-0">
-              <span
-                className="absolute -left-[3.5px] top-2 h-1.5 w-1.5 rounded-full bg-primary"
-                aria-hidden="true"
-              />
-              <Reveal delay={i * 0.05}>
-                <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
-                  <span className="font-plaque text-xs text-primary">{e.period}</span>
-                  <span className="font-plaque text-[11px] text-muted-foreground">{e.kind}</span>
-                </div>
-                <h3 className="font-display text-xl md:text-2xl mt-1.5">{e.org}</h3>
-                <p className="text-plaster/70 mt-0.5">{e.role}</p>
-                {e.points.length > 0 && (
-                  <ul className="mt-3 space-y-1.5">
-                    {e.points.map((p, pi) => (
-                      <li key={pi} className="flex gap-2.5 text-sm text-muted-foreground leading-relaxed">
-                        <span className="text-primary/70 shrink-0" aria-hidden="true">·</span>
-                        <span>{p}</span>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-                {e.tech && e.tech.length > 0 && (
-                  <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 font-plaque text-[11px] text-muted-foreground">
-                    {e.tech.map((t) => (
-                      <span key={t}>{t}</span>
-                    ))}
-                  </div>
-                )}
-              </Reveal>
-            </li>
-          ))}
-        </ol>
+    <Wall group="timeline" label={`II · 年表 ${String(index + 1).padStart(2, "0")}`}>
+      <figure className="frame w-full rounded-md bg-cream p-3">
+        <div className="overflow-hidden rounded-sm">
+          <Artwork variant={VARIANTS[index % VARIANTS.length]} className="aspect-[16/9] w-full" />
+        </div>
+      </figure>
+      <div className="mt-6">
+        <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+          <span className="font-plaque text-xs text-primary">{entry.period}</span>
+          <span className="font-plaque text-[11px] text-muted-foreground">{entry.kind}</span>
+        </div>
+        <h3 className="font-display text-2xl text-ink mt-1.5">{entry.org}</h3>
+        <p className="text-ink/65 mt-0.5">{entry.role}</p>
+        {entry.points.length > 0 && (
+          <ul className="mt-3 space-y-1.5">
+            {entry.points.map((p, pi) => (
+              <li key={pi} className="flex gap-2.5 text-sm text-ink/65 leading-relaxed">
+                <span className="text-primary/70 shrink-0" aria-hidden="true">·</span>
+                <span>{p}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+        {entry.tech && entry.tech.length > 0 && (
+          <div className="mt-3 flex flex-wrap gap-1.5">
+            {entry.tech.map((t) => (
+              <span key={t} className="px-2 py-0.5 bg-secondary text-ink/70 font-plaque text-[11px] rounded-sm">
+                {t}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
-    </section>
+    </Wall>
   );
 }
 
-function Collection({ projects }: { projects: ProjectItem[] }) {
-  if (projects.length === 0) return null;
+/* ---------- 展厅墙（每个项目一面） ---------- */
+
+function GalleryWall({ project, index }: { project: ProjectItem; index: number }) {
   return (
-    <section id="collection" className="py-24 md:py-32 px-6 md:px-16 lg:px-24 border-t border-border">
-      <div className="max-w-5xl mx-auto">
-        <Reveal>
-          <SectionHeading numeral="III" title="馆藏" lede="每一件作品都是一次尝试，按编号陈列。" />
-        </Reveal>
-        <div className="border-t border-border">
-          {projects.map((p, i) => (
-            <Reveal key={i}>
-              <article className="group grid grid-cols-[2.5rem_1fr] md:grid-cols-[3.5rem_1fr] gap-4 md:gap-8 py-9 border-b border-border">
-                <span className="font-plaque text-sm text-primary tabular-nums pt-1">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <div>
-                  <div className="flex flex-wrap items-baseline justify-between gap-3">
-                    <h3 className="font-display text-2xl group-hover:text-primary transition-colors">
-                      {p.name}
-                    </h3>
-                    <div className="flex items-center gap-4 text-sm">
-                      {p.github && (
-                        <a
-                          href={p.github}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors"
-                        >
-                          代码
-                          <ArrowUpRight size={13} strokeWidth={1.5} aria-hidden="true" />
-                        </a>
-                      )}
-                      {p.url && (
-                        <a
-                          href={p.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors"
-                        >
-                          预览
-                          <ArrowUpRight size={13} strokeWidth={1.5} aria-hidden="true" />
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                  <p className="mt-2.5 text-muted-foreground leading-relaxed max-w-2xl">{p.description}</p>
-                  {p.technologies && p.technologies.length > 0 && (
-                    <div className="mt-3.5 flex flex-wrap gap-x-3 gap-y-1 font-plaque text-[11px] text-muted-foreground">
-                      {p.technologies.map((t) => (
-                        <span key={t}>{t}</span>
-                      ))}
-                    </div>
+    <Wall group="gallery" label={`III · 展品 ${String(index + 1).padStart(2, "0")}`}>
+      <figure className="frame w-full rounded-md bg-cream p-3">
+        <div className="overflow-hidden rounded-sm">
+          <Artwork variant={VARIANTS[index % VARIANTS.length]} className="aspect-[16/10] w-full" />
+        </div>
+      </figure>
+      <figcaption className="mt-6 px-1">
+        <div className="flex items-baseline justify-between gap-3">
+          <h3 className="font-display text-2xl text-ink">{project.name}</h3>
+          <span className="font-plaque text-xs text-muted-foreground shrink-0">
+            {String(index + 1).padStart(2, "0")}
+          </span>
+        </div>
+        <p className="mt-2 text-ink/65 leading-relaxed">{project.description}</p>
+        {project.technologies && project.technologies.length > 0 && (
+          <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 font-plaque text-[11px] text-muted-foreground">
+            {project.technologies.map((t) => (
+              <span key={t}>{t}</span>
+            ))}
+          </div>
+        )}
+        <div className="mt-4 flex items-center gap-5 text-sm">
+          {project.github && (
+            <a
+              href={project.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-primary hover:text-ink transition-colors"
+            >
+              代码
+              <ArrowUpRight size={13} strokeWidth={1.8} aria-hidden="true" />
+            </a>
+          )}
+          {project.url && (
+            <a
+              href={project.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-primary hover:text-ink transition-colors"
+            >
+              预览
+              <ArrowUpRight size={13} strokeWidth={1.8} aria-hidden="true" />
+            </a>
+          )}
+        </div>
+      </figcaption>
+    </Wall>
+  );
+}
+
+/* ---------- 材料墙 ---------- */
+
+function MaterialsWall({ skills }: { skills: SkillCategory[] }) {
+  return (
+    <Wall group="materials" wide label="IV · 材料与工艺">
+      <div className="grid grid-cols-3 gap-10 w-full">
+        {skills.map((cat, ci) => (
+          <div key={cat.category}>
+            <h3 className="font-display text-xl mb-4 text-ink">{cat.category}</h3>
+            <ul className="border-t border-border">
+              {cat.items.map((s, si) => (
+                <li key={s.name} className="flex items-center gap-3 py-2.5 border-b border-border/60">
+                  <span
+                    className="frame h-5 w-5 shrink-0 rounded-sm"
+                    style={{ backgroundColor: SAMPLE[(ci + si) % SAMPLE.length] }}
+                    aria-hidden="true"
+                  />
+                  <span className="text-ink/85">{s.name}</span>
+                  {s.level !== undefined && (
+                    <span className="ml-auto font-plaque text-xs text-muted-foreground tabular-nums">
+                      {s.level}
+                    </span>
                   )}
-                </div>
-              </article>
-            </Reveal>
-          ))}
-        </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
       </div>
-    </section>
+    </Wall>
   );
 }
 
-function Materials({ skills }: { skills: SkillCategory[] }) {
-  if (skills.length === 0) return null;
-  return (
-    <section id="materials" className="py-24 md:py-32 px-6 md:px-16 lg:px-24 border-t border-border">
-      <div className="max-w-5xl mx-auto">
-        <Reveal>
-          <SectionHeading numeral="IV" title="材料与工艺" lede="按类陈列的技术与工具，数字为自评熟练度。" />
-        </Reveal>
-        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
-          {skills.map((cat, i) => (
-            <Reveal key={cat.category} delay={i * 0.05}>
-              <div>
-                <h3 className="font-display text-xl mb-4">{cat.category}</h3>
-                <ul className="border-t border-border">
-                  {cat.items.map((s) => (
-                    <li
-                      key={s.name}
-                      className="flex items-baseline justify-between gap-4 py-2.5 border-b border-border/60"
-                    >
-                      <span className="text-plaster/85">{s.name}</span>
-                      {s.level !== undefined && (
-                        <span className="font-plaque text-xs text-muted-foreground tabular-nums">
-                          {s.level}
-                        </span>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </Reveal>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
+/* ---------- 出口墙 ---------- */
 
-function Exit() {
+function ExitWall() {
   const { meta } = resume;
   return (
-    <section id="exit" className="py-28 md:py-40 px-6 md:px-16 lg:px-24 border-t border-border">
-      <div className="max-w-3xl mx-auto text-center">
-        <Reveal>
-          <div className="font-plaque text-sm text-primary mb-6">V 出口</div>
-          <h2 className="font-display text-[clamp(2.5rem,7vw,5rem)] leading-tight">感谢参观</h2>
-          <p className="mt-6 text-muted-foreground max-w-md mx-auto leading-relaxed">
-            如果你愿意继续交流，欢迎写信。展览到此结束，故事仍在前方。
-          </p>
-          <a
-            href={`mailto:${meta.email}`}
-            className="inline-block mt-10 font-display text-2xl md:text-3xl text-primary hover:underline underline-offset-8 decoration-primary/50"
-          >
-            {meta.email}
-          </a>
-          <div className="mt-12 flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm">
-            {meta.github && <SocialLink href={`https://github.com/${meta.github}`} label="GitHub" />}
-            {meta.linkedin && (
-              <SocialLink href={`https://linkedin.com/in/${meta.linkedin}`} label="LinkedIn" />
-            )}
-            {meta.twitter && (
-              <SocialLink href={`https://twitter.com/${meta.twitter}`} label="Twitter" />
-            )}
-            {meta.website && <SocialLink href={meta.website} label="个人网站" />}
-          </div>
-          <button
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="mt-16 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-plaster transition-colors"
-          >
-            <ArrowUp size={15} strokeWidth={1.5} aria-hidden="true" />
-            回到入口
-          </button>
-        </Reveal>
+    <Wall group="exit" wide label="V · 出口" className="text-center">
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{ background: "radial-gradient(ellipse 60% 55% at 50% 0%, #fffbf0 0%, transparent 60%)" }}
+        aria-hidden="true"
+      />
+      <div className="relative">
+        <h2 className="font-display text-[clamp(2.6rem,6vw,4.5rem)] leading-tight text-ink">感谢参观</h2>
+        <p className="mt-5 text-ink/65 max-w-md mx-auto leading-relaxed">
+          愿你在光里多留一会儿。若愿意继续交流，欢迎写信。
+        </p>
+        <a
+          href={`mailto:${meta.email}`}
+          className="inline-block mt-9 font-display text-2xl md:text-3xl text-primary hover:text-ink transition-colors underline-offset-8 hover:underline decoration-primary/40"
+        >
+          {meta.email}
+        </a>
+        <div className="mt-10 flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm">
+          {meta.github && <SocialLink href={`https://github.com/${meta.github}`} label="GitHub" />}
+          {meta.linkedin && <SocialLink href={`https://linkedin.com/in/${meta.linkedin}`} label="LinkedIn" />}
+          {meta.twitter && <SocialLink href={`https://twitter.com/${meta.twitter}`} label="Twitter" />}
+          {meta.website && <SocialLink href={meta.website} label="个人网站" />}
+        </div>
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          className="mt-12 inline-flex items-center gap-2 text-sm text-ink/60 hover:text-primary transition-colors"
+        >
+          <ArrowUp size={15} strokeWidth={1.6} aria-hidden="true" />
+          走回入口
+        </button>
       </div>
-    </section>
+    </Wall>
   );
 }
 
@@ -547,10 +588,10 @@ function SocialLink({ href, label }: { href: string; label: string }) {
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="inline-flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors"
+      className="inline-flex items-center gap-1 text-ink/60 hover:text-primary transition-colors"
     >
       {label}
-      <ArrowUpRight size={13} strokeWidth={1.5} aria-hidden="true" />
+      <ArrowUpRight size={13} strokeWidth={1.8} aria-hidden="true" />
     </a>
   );
 }

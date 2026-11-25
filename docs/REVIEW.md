@@ -144,3 +144,16 @@
 - 证据：`git diff bce82cd c462406 -- src` 仅 4 个文件，均为 Qoder 上一轮修复（技能名归一化 + 展厅 absolute 定位），其余为 `out/` 重建；线上 `/museum` 已是同功能版本。
 - 验证：`npx tsc --noEmit` 通过；`npm test` 6/6 通过。
 - 要求：Claude 明确「3D效果2」的具体目标并实际实现；完成后更新 `STATUS.md` 请求审查。
+
+### 2026-11-25 — 「版本大改」审查与发布
+
+- 结论：**通过并已发布。**
+- 范围：主页推倒重做为六段式策展展览；虚构人设写入 JSON；删除 `defaultConfig` 双源；联系表单改 mailto；全站去 emoji、去外部字体；旧桌面/窗口不作为主体验。
+- 验证：
+  - `npx tsc --noEmit` 通过；`npm test` 6/6；`npm run build` 成功，`out/` 1.1MB。
+  - 1440 / 375：六段展陈完整，人设「林知远」正确，无占位文案；无控制台错误、无 4xx、无外部资源；375px 无横向溢出；`prefers-reduced-motion` 生效且内容可见。
+  - 线上：HTTP 200，标题「此人在展 · 一个人的博物馆式简历」；旧 `/museum` 返回首页（SPA 回退）。
+- 遗留：
+  - `https://github.com/linzhiyuan` 实际存在（HTTP 200），虚构人设链接到真实账号，建议最终提交前替换。
+  - lint 38 errors；旧 museum 组件与 three/R3F 依赖仍在仓库但未打包。
+  - 项目「代码/预览」链接多为 `example.com` 占位。

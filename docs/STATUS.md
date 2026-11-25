@@ -1,7 +1,7 @@
 # STATUS — 滚动进度（续接点）
 
 最后更新：2026-11-25 夜
-当前阶段：主页已推倒重做为「策展式展览」；视觉系统重建完成；待截图验收与部署
+当前阶段：大改版已通过 Qoder 审查并发布（策展式展览）；旧 `/museum` 路由回退到首页
 
 ## 本次重设计（2026-11-25）
 
@@ -27,22 +27,24 @@
 - 完整虚构人设写入 `public/resume-config.json`（林知远 / 创意技术开发者）。
 - 旧 apps 的 emoji 与玻璃卡样式统一清理为展柜卡；`ContactApp` 表单改为 `mailto`（静态站无后端）。
 - 3D 展厅配色由荧光蓝紫改为铜/石青；`AboutHall` emoji→Lucide。
-- `npm run build` 成功（`/`、`/museum`、`/_not-found` 静态导出）；`npx tsc --noEmit` 零错误。
+- `npm run build` 成功（`/`、`/_not-found` 静态导出）；`npx tsc --noEmit` 零错误。
+- Qoder 完成 1440/375 截图与运行时验收，并发布到现有站点（public）。
+- 验证证据：无控制台错误/4xx/外部资源；375 无横向溢出；减弱动效下 6 段可见；线上标题与首页内容正确。
 
 ## 进行中
 
-- Playwright Chromium 安装中，准备 1440 / 375 截图验收。
-- 旧桌面 / 窗口 / museum 组件是否保留：`/museum` 仍在，主页已不再引用桌面系统。
+- 无，发布完成。等待用户决定旧 `/museum` 与 GitHub 链接处理。
 
 ## 阻塞
 
 - 无发布阻断。
+- **合规待决**：虚构人设 GitHub 链接 `https://github.com/linzhiyuan` 实际存在（HTTP 200），指向真实账号；最终提交前建议改为示例账号或移除。
 
 ## 下一步（最多 3 条）
 
-1. 截图验收（1440 桌面 / 375 移动），修正视觉问题。
-2. 决定 `/museum` 3D 页去留（保留为附加展厅或移除）。
-3. `npm run build` 后交 Qoder 审查并部署 Qoder Sites、公网验证。
+1. 用户确认后，把 JSON 中 GitHub 链接改为不存在的示例账号或移除。
+2. 决定是否彻底删除旧 museum 组件与 three/R3F 依赖（当前未打包，不影响体积）。
+3. 清理 lint 38 errors。
 
 ## 需要用户提供
 
@@ -73,3 +75,35 @@
 
 - 主站为 `src/components/exhibition/Exhibition.tsx` + `src/app/page.tsx`。
 - 旧桌面/窗口/3D 组件（`src/components/desktop`、`apps`、`museum`）已不在任何路由中引用，属死代码；保留以维持 `npm test` 与类型稳定，后续可整体移除并同步精简依赖。`/museum` 路由已删除。
+
+## 二次调整：暖光画廊（2026-11-25 深夜）
+
+用户要求：做成「游历画廊」、暖色调、可用动漫风格。已将暗色策展版改为**暖光画廊漫游**：
+
+- 色板：奶油墙 `#f4e7cf`、暖沙 `#e8d3b0`、陶土 `#c97b5a`、赭金 `#c99a4e`、暮橙 `#e8a87c`、深棕墨 `#4a342a`（不用纯黑）。
+- 入口：暖光拱形门洞 + 黄昏山野 + 站在光里的简笔人物剪影。
+- I 自画像（画框 + 陈述 + 档案）、II 年表（挂画长廊）、III 展厅（错落大画框）、IV 材料样品墙、V 出口暖光。
+- 新建 `src/components/exhibition/Artwork.tsx`：程序生成的暖色风景插画（黎明/暮色/城市/海/林/月 6 种变体），纯 SVG 无外部素材。
+- 氛围：漂浮光点、纸纹颗粒、暖光渐变。
+- 移动端门洞高度收小（`h-[44vh] md:h-[58vh]`）。
+- 验收：`npx tsc --noEmit` 零错误；`npm run build` 成功；截图 `gallery-hero-1440.png`、`gallery-hero-375.png`、`gallery-1440.png`。
+
+## 三次调整：横向画廊长廊（2026-11-25 深夜）
+
+用户要求：更「游历」——横向画廊长廊，滚轮推着沿墙走；移动端暂不做。已实现：
+
+- 滚动驱动横向平移：`framer-motion` 的 `useScroll` + `useTransform`，外层高容器 `height: 100vh + 横向总宽`，`sticky` 视口内 `track` 随 `scrollYProgress` 横向位移。原生滚动、无 scroll-jacking，键盘/触控板均可。
+- 12 面展墙横向排列：入口 → 自画像 → 年表 ×3（每段经历/教育一墙）→ 展厅 ×5（每个项目一墙）→ 材料 → 出口。
+- 底部导览：6 个分区按钮，点击 `scrollTo` 精确对齐该区首墙（`scrollY == wall.offsetLeft` 推导）。
+- 深链：`#wall-N` 直达第 N 面墙。
+- 移动端暂不专门适配（横向仍可用，未做精细优化）。
+- 验收：`tsc` 零错误、`build` 成功；截图 `lane-0-entrance.png`、`lane-1-portrait.png`、`lane-5-gallery.png`、`lane-10-materials.png`（横向平移与墙对齐正确）。
+
+## 四次调整：亮色调（2026-11-25 深夜）
+
+用户要求：整体亮色调，不用暗色调。已调亮：
+
+- 背景 `#f4e7cf → #fbf3e4`；文字 `#4a342a → #5a4436`（中深棕，保证可读）；边框/边线改浅（`#e8d3b0`）。
+- 画作全部调亮：山体/城市/树由深棕改为浅赭浅棕（`#c89464/#c89a6e/#c88c5a`），天空更亮，云更白。
+- 入口门洞渐变调亮；背景暖光、纸纹减弱。
+- 验收：`build` 成功；截图 `bright-0-entrance.png`、`bright-5-gallery.png`。
