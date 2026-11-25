@@ -80,7 +80,7 @@ export function Desktop() {
       onContextMenu={handleDesktopClick}
     >
       {/* 壁纸背景 */}
-      <div className="absolute inset-0 z-0 bg-[url('/images/wallpaper.jpg')] bg-cover bg-center opacity-60" />
+      <div className="absolute inset-0 z-0 bg-[url('/images/wallpaper.svg')] bg-cover bg-center opacity-60" />
       <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/40 to-black/10" />
 
       {/* 桌面图标区域 */}
