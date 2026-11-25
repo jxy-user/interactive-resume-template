@@ -1,0 +1,70 @@
+name: Deploy to GitHub Pages
+
+on:
+  # 推送到 main 分支时触发
+  push:
+    branches: [main, master]
+  # 手动触发
+  workflow_dispatch:
+
+# 权限设置
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 并发控制
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  # 构建任务
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 仓库
+        uses: actions/checkout@v4
+
+      - name: 设置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: 安装依赖
+        run: npm ci
+
+      - name: 构建项目
+        run: npm run build
+        env:
+          NEXT_PUBLIC_APP_NAME: "交互式个人简历模板"
+          NEXT_PUBLIC_APP_VERSION: "1.0.0"
+
+      - name: 上传构建产物
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./out
+
+  # 部署任务
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: 部署到 GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: 部署完成通知
+        if: success()
+        run: |
+          echo "🎉 部署成功！"
+          echo "访问地址: ${{ steps.deployment.outputs.page_url }}"
+
+      - name: 部署失败通知
+        if: failure()
+        run: |
+          echo "❌ 部署失败，请检查日志"

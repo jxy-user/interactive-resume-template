@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" fill="none">
+  <rect width="1920" height="1080" fill="#0f172a"/>
+  <defs>
+    <radialGradient id="bgGradient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#1e3a5f"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </radialGradient>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#bgGradient)"/>
+  <g opacity="0.1">
+    <rect x="0" y="0" width="1920" height="1080" fill="url(#grid)"/>
+  </g>
+  <defs>
+    <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse">
+      <path d="M 60 0 L 0 0 0 60" fill="none" stroke="#3b82f6" stroke-width="0.5"/>
+    </pattern>
+  </defs>
+  <text x="960" y="540" text-anchor="middle" font-family="system-ui" font-size="48" font-weight="300" fill="#3b82f6" opacity="0.15">交互式简历模板</text>
+</svg>

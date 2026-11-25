@@ -1,0 +1,29 @@
+{
+  "name": "交互式个人简历模板",
+  "short_name": "简历模板",
+  "description": "基于桌面场景的交互式个人简历网站模板，参加 Qoder 高校创造力大赛 LifeHack 赛道作品",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#3b82f6",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "utilities"],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "打开终端",
+      "short_name": "终端",
+      "description": "打开终端模拟器查看简历",
+      "url": "/?terminal=true",
+      "icons": [{ "src": "/icon.svg", "sizes": "192x192" }]
+    }
+  ]
+}
