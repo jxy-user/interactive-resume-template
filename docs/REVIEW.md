@@ -107,3 +107,14 @@
   - 演示数据仍是"你的名字"等占位，且 `src/lib/config.ts` 与 JSON 双源；G2 必须换成完整虚构人设并消除双源。
   - 联系表单为模拟提交（`ContactApp.tsx:24-37`），G2 改为 mailto 或明确示例。
   - 主题色变量 `--primary` 与 Tailwind `--color-primary` 不一致；最小化按钮已移除，任务栏/恢复能力留待 G2。
+
+### 2026-11-25 — G2 提交审查
+
+- 结论：**不通过，不发布。该提交不含 G2 内容。**
+- 证据：
+  - `git diff 310fd34 0c9f958 -- src public` 仅包含 G1 修复（窗口/图标/移动端/构建/字体）与新增文档，无内容、引导或模块改动。
+  - `public/resume-config.json` 仍是「你的名字 / yoursite.com / your-github-username」占位。
+  - `src/lib/config.ts` 仍复制整份 `defaultConfig`，双源未消除。
+  - `src/components/apps/ContactApp.tsx:24-37` 仍为 1 秒后直接显示成功的模拟提交。
+  - 线上 `/_next/static/*` 与本地 `out/` 哈希完全一致，说明线上已是当前构建，重复发布会是空发布。
+- G2 必须补齐：完整虚构人设、单源数据、首次引导（≤3 步可跳过）、各模块入口/退出、lint 26 errors、表单与主题色问题；完成后更新 `STATUS.md` 请求审查。
