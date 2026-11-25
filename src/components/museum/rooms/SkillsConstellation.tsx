@@ -4,6 +4,7 @@ import { useRef, useEffect, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { Html } from "@react-three/drei";
+import { getSkillName, type SkillLike } from "@/lib/museumSkills";
 import { gsap } from "gsap";
 
 interface SkillsConstellationProps {
@@ -45,18 +46,18 @@ export function SkillsConstellation({ config, isActive, onEnter }: SkillsConstel
     ];
 
     // 为每个类别生成星座位置
-    return skills.map((cat: { category: string; items: string[] }, catIndex: number) => {
+    return skills.map((cat: { category: string; items: SkillLike[] }, catIndex: number) => {
       const centerAngle = (catIndex / skills.length) * Math.PI * 2;
       const centerRadius = 8;
       const centerX = Math.cos(centerAngle) * centerRadius;
       const centerZ = Math.sin(centerAngle) * centerRadius;
       const centerY = 3 + catIndex * 1.5;
 
-      const stars = cat.items.map((item: string, itemIndex: number) => {
+      const stars = cat.items.map((item, itemIndex: number) => {
         const angle = (itemIndex / cat.items.length) * Math.PI * 2;
         const radius = 1.5 + Math.random() * 1;
         return {
-          name: item,
+          name: getSkillName(item),
           category: cat.category,
           position: new THREE.Vector3(
             centerX + Math.cos(angle) * radius,

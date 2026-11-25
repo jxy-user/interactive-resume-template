@@ -1,8 +1,8 @@
 # STATUS — 滚动进度（续接点）
 
 最后更新：2026-11-25 晚
-当前阶段：G2 提交审查不通过（该提交不含 G2 内容），未发布，退回 Claude Code
-已完成：数字展厅 3D 体验开发完成（commit beb4dcf），已推送到 origin/master
+当前阶段：3D 数字展厅已修复并发布；G2 内容仍待补
+已完成：数字展厅 3D 体验（commit beb4dcf / bce82cd）经 Qoder 修复后上线
 
 
 ## 已完成
@@ -24,19 +24,17 @@
 ## 进行中
 
 - G2 内容补齐（Claude Code）。
-- 数字展厅 3D 体验开发完成（博物馆隐喻沉浸式 3D 简历）。
 
 ## 阻塞
 
-- G2 提交 `0c9f958` 实际只包含 G1 修复与交接文档，未实现 G2；Qoder 未发布，线上仍为 G1 版本。
-- 线上资源哈希与本地 `out/` 完全一致，重复发布不会产生页面变化。
+- 无发布阻断。
 - 流程前提：仓库内 `docs/` 为唯一事实源；父目录 `docs/` 仅为快照。
 
 ## 下一步（最多 3 条）
 
 1. Claude Code 完成真正的 G2：替换完整虚构人设、消除 `defaultConfig`/JSON 双源、首次引导、剩余模块。
-2. G2 内清理 lint 26 errors、联系表单假提交、主题色变量；跑通 build/tsc/test 后更新本文件请求审查。
-3. Qoder 复验通过后再发布；发布后验证公网无登录可访问且版本变化。
+2. 清理 lint 39 errors；处理展厅硬编码文案与 `prefers-reduced-motion`。
+3. G2 后 Qoder 复验并再次发布。
 
 ## 已完成（新增）
 
@@ -75,4 +73,8 @@
 - Qoder Sites：发布成功（published=true，operation succeeded）；访问级别已改为 public。
 - 公开访问验证：`curl` 返回 HTTP 200，标题正确；无登录态浏览器可渲染 8 个桌面图标按钮，控制台无消息。
 - G2 提交审查（`0c9f958`）：源码 diff 仅 15 个文件，全部为 G1 修复与文档；`public/resume-config.json` 仍为「你的名字」占位，`src/lib/config.ts` 仍有重复 `defaultConfig`，`ContactApp.tsx:24-37` 仍为模拟提交。
-- 版本对比：本地 `out/index.html` 与线上 `/_next/static/*` 资源哈希逐一相同，线上即当前构建，无新版本可发布。
+- 3D 审查修复（2026-11-25）：
+  - 修复技能对象渲染导致的 React #31（`src/lib/museumSkills.ts` + `SkillsConstellation`）。
+  - 展厅定位由 fixed 改 absolute，桌面窗口内不再遮挡关闭按钮。
+  - `npm test` 6/6、`tsc` 通过、build 成功；本地 1440/375 与线上均 React 异常 0。
+- 3D 已发布：现有站点新增 `/museum`（HTTP 200），公开访问正常，museum 资源哈希更新。

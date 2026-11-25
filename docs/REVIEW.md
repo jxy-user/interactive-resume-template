@@ -118,3 +118,22 @@
   - `src/components/apps/ContactApp.tsx:24-37` 仍为 1 秒后直接显示成功的模拟提交。
   - 线上 `/_next/static/*` 与本地 `out/` 哈希完全一致，说明线上已是当前构建，重复发布会是空发布。
 - G2 必须补齐：完整虚构人设、单源数据、首次引导（≤3 步可跳过）、各模块入口/退出、lint 26 errors、表单与主题色问题；完成后更新 `STATUS.md` 请求审查。
+
+### 2026-11-25 — 3D 数字展厅审查与发布
+
+- 结论：**修复两个阻断项后通过，已发布到现有站点（public）。**
+- 发现：
+  - 技能星座把配置里的 `{name, level}` 对象直接当 React 子节点渲染，进入展厅后连续抛 React #31（根因 `SkillsConstellation.tsx:55-59`，渲染点 `:306`）。
+  - 桌面内嵌展厅的根容器为 `fixed inset-0`，canvas 覆盖窗口标题栏，关闭按钮不可点（`MuseumScene.tsx:30`）。
+- 修复（Qoder）：
+  - 新增 `src/lib/museumSkills.ts` 归一化技能名，`SkillsConstellation` 改用 `getSkillName()`；新增 2 条单测。
+  - `MuseumScene` 改为 `absolute inset-0`，加载层与底部导航同步改 absolute，展厅被约束在窗口内容区。
+- 验证：
+  - `npm test` 6/6；`npx tsc --noEmit` 通过；`npm run build` 成功，`out/` 2.3MB（首屏 811KB，3D 包按需加载）。
+  - 本地 1440/375：桌面内嵌展厅关闭按钮可点、关闭归零；`/museum` 可进入，canvas 全屏；React 异常 0；375px 无横向溢出，底部 4 个展厅按钮可用。
+  - 线上：首页与 `/museum/` 均 HTTP 200；museum 资源哈希已更新；无登录态访问正常，React 异常 0。
+- 遗留（不阻断发布）：
+  - lint 39 errors。
+  - 展厅内仍有硬编码展示文案，未完全走 `public/resume-config.json` 单源。
+  - 3D 动画尚未处理 `prefers-reduced-motion`。
+  - G2 内容占位仍未替换。

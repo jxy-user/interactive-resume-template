@@ -27,10 +27,10 @@ export function MuseumScene() {
   };
 
   return (
-    <div className="fixed inset-0 z-0" style={{ touchAction: "none" }}>
+    <div className="absolute inset-0 z-0" style={{ touchAction: "none" }}>
       {/* 加载指示器 */}
       {!isLoaded && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black">
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black">
           <div className="text-center">
             <div className="w-12 h-12 border-4 border-primary/30 border-t-primary rounded-full animate-spin mx-auto mb-4" />
             <p className="text-primary text-lg">初始化数字展厅...</p>
@@ -153,7 +153,7 @@ function SceneContent({
 function LoadingFallback() {
   return (
     <Html
-      wrapperClass="fixed inset-0 flex items-center justify-center bg-black/50 z-10"
+      wrapperClass="absolute inset-0 flex items-center justify-center bg-black/50 z-10"
       prepend
     >
       <div className="text-center">
@@ -180,7 +180,7 @@ function RoomNavigator({
   ];
 
   return (
-    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 flex gap-2">
+    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-40 flex gap-2">
       {rooms.map((room) => (
         <button
           key={room.id}
