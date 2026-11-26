@@ -108,3 +108,31 @@
 - 画作全部调亮：山体/城市/树由深棕改为浅赭浅棕（`#c89464/#c89a6e/#c88c5a`），天空更亮，云更白。
 - 入口门洞渐变调亮；背景暖光、纸纹减弱。
 - 验收：`build` 成功；截图 `bright-0-entrance.png`、`bright-5-gallery.png`。
+
+## 五次调整：手绘素描 3D 走廊（CSS 3D + SVG，2026-11-26）
+
+用户提供 ITOM 项目视频，确认要「白色手绘素描 3D 走廊」风格。按用户选择走 CSS 3D + SVG 手绘（非 WebGL）。已实现 MVP：
+
+- 新建 `src/components/sketch/`：
+  - `primitives.tsx`：纸纹、手绘云、弯曲箭头、木牌、门、彩色贴纸。
+  - `Corridor.tsx`：SVG 一点透视走廊（天花板/左右墙/木地板/远处光洞），左门 `THE GALLERY`、右门 `THE STUDIO`、尽头 `ABOUT` 光洞、底部 `CONTACT` 木牌，均可点击进入。
+  - `Rooms.tsx`：Gallery（黑白墨稿画框 + 展签）、Studio（技能）、About（手绘围巾少年 + 简介 + 时间轴）、Contact（手绘卡片 + 木牌）。
+  - `SketchWorld.tsx`：场景状态 + `AnimatePresence` 过渡；`?room=gallery` 深链。
+- 色板改为纸白 `#f7f5ef` + 铅笔黑 `#2b2a26`，黑白 + 彩色贴纸焦点，手写楷体（`font-hand`）。
+- 主页 `page.tsx` → `SketchWorld`。
+- 验收：`tsc` 零错误、`build` 成功；截图 `sketch-corridor.png`、`sketch-gallery.png`、`sketch-about.png`、`sketch-contact.png`。
+
+## 打磨完成（2026-11-26）
+
+- 走廊门：加木纹横线、门框双线、门缝透光竖条、踢脚线、更精致把手。
+- 展廊墨稿：6 种图案变体（同心圆/波浪山/柱状/螺旋/花瓣/星点），避免雷同；画框 hover 有「上色」渐变（呼应 ITOM 招牌）。
+- 关于页人物：细化头发、笑脸（眼/嘴）、围巾（含飘带）、大衣翻领与扣子、手、腿。
+- 键盘可达：三扇门与光洞均 `role=button/tabIndex/onKeyDown`（Enter/Space）；返回、联系均 button/a。
+- 移动端：竖屏加「建议横屏/电脑浏览」提示；房间为响应式网格。
+- 验收：`tsc` 零错误、`build` 成功；截图 `sketch2-corridor.png`、`sketch2-gallery.png`、`sketch2-about.png`。
+
+## 剩余可选项
+
+1. 走廊竖屏专门适配（当前仅提示）。
+2. 门后转场动画（镜头推进）可加强「走进去」感。
+3. 可选音效开关（ITOM 有 audio toggle）。

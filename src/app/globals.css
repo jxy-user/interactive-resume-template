@@ -7,39 +7,36 @@
  * 颜色用完整 hex 值（Tailwind v4 的 @theme 必须），文字用深棕而非纯黑。
  */
 @theme {
-  --color-background: #fbf3e4;      /* 亮奶油墙 */
-  --color-foreground: #5a4436;      /* 中深棕（柔和，非纯黑） */
-  --color-card: #fff9ef;            /* 暖白卡 */
-  --color-card-foreground: #5a4436;
-  --color-popover: #fff9ef;
-  --color-popover-foreground: #5a4436;
+  --color-background: #f7f5ef;      /* 纸白 */
+  --color-foreground: #2b2a26;      /* 铅笔黑 */
+  --color-card: #fffdf8;            /* 纸卡 */
+  --color-card-foreground: #2b2a26;
+  --color-popover: #fffdf8;
+  --color-popover-foreground: #2b2a26;
 
-  --color-primary: #d08a5a;         /* 亮陶土 */
-  --color-primary-foreground: #fffdf7;
+  --color-primary: #3a3833;         /* 铅笔深 */
+  --color-primary-foreground: #f7f5ef;
 
-  --color-secondary: #f3e6cc;       /* 亮暖沙 */
-  --color-secondary-foreground: #5a4436;
-  --color-muted: #f0e2c6;
-  --color-muted-foreground: #9a7f68;
+  --color-secondary: #efece3;       /* 浅灰纸 */
+  --color-secondary-foreground: #2b2a26;
+  --color-muted: #ece9df;
+  --color-muted-foreground: #8a857a;
 
-  --color-accent: #d6a85c;          /* 浅赭金 */
-  --color-accent-foreground: #5a4436;
+  --color-accent: #e07a5f;          /* 一点彩色焦点 */
+  --color-accent-foreground: #fffdf8;
 
-  --color-destructive: #c05a40;
-  --color-destructive-foreground: #fffdf7;
+  --color-destructive: #c0503c;
+  --color-destructive-foreground: #fffdf8;
 
-  --color-border: #e8d3b0;          /* 浅暖边线 */
-  --color-input: #e8d3b0;
-  --color-ring: #d08a5a;
+  --color-border: #d8d3c6;          /* 铅笔细线 */
+  --color-input: #d8d3c6;
+  --color-ring: #3a3833;
 
-  /* 画廊材质补充 */
-  --color-paper: #fbf3e4;
-  --color-sand: #f5e8cf;
-  --color-clay: #d08a5a;
-  --color-ochre: #d6a85c;
-  --color-sunset: #f2b98c;
-  --color-ink: #5a4436;
-  --color-cream: #fffdf7;
+  /* 手绘素描补充 */
+  --color-paper: #f7f5ef;
+  --color-pencil: #2b2a26;
+  --color-graphite: #6f6b62;
+  --color-cream: #fffdf8;
 
   /* 画框直角偏圆润 */
   --radius-sm: 2px;

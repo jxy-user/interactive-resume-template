@@ -1,5 +1,5 @@
-import { Exhibition } from "@/components/exhibition/Exhibition";
+import { SketchWorld } from "@/components/sketch/SketchWorld";
 
 export default function Home() {
-  return <Exhibition />;
+  return <SketchWorld />;
 }
