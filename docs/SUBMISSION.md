@@ -1,18 +1,18 @@
 # SUBMISSION — 作品帖与提交清单
 
-状态：已起草，待部署后补公网链接、截图与个人自述。
+状态：M2 已部署，公网链接已补；待补个人自述与论坛发布。
 
 ## 基本信息
 
 - 作品名：**《此人在展》**（英文 *On Display*）
 - 赛道：LifeHack（生活娱乐）
 - Qoder 账号：**Jxy**
-- 公网链接：**待 Qoder Sites 部署后填入**（旧站 `interactive-resume-ne4ii85id3h.qoder.website` 为早期版本，需以新版重新部署）
+- 公网链接：https://interactive-resume-ne4ii85id3h.qoder.website （M2，公开，未登录 HTTP 200）
 - 源码仓库：https://github.com/jxy-user/interactive-resume-template
 
 ## 提交 Checklist
 
-- [ ] Qoder Sites 公网链接可访问（无痕窗口 HTTP 200，`/_next/` 资源正常）
+- [x] Qoder Sites 公网链接可访问（未登录 HTTP 200，`/_next/` 资源正常；2026-11-25 M2 验证）
 - [ ] 天池论坛作品帖已发布，标题含【LifeHack】
 - [ ] 帖子含：自我介绍 / 作品是什么 / 为什么做 / 怎么用（≤5 步）/ 怎么用 Qoder
 - [ ] 帖子写明 Qoder 账号（Jxy）
