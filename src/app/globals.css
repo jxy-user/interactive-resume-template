@@ -147,6 +147,21 @@
   animation: sway 6s ease-in-out infinite;
 }
 
+/* 走廊呼吸 —— 无尽长廊的活着的错觉 */
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.025); }
+}
+.animate-breathe {
+  animation: breathe 9s ease-in-out infinite;
+}
+
+/* 地板流动 —— 向前走的错觉 */
+@keyframes floorflow {
+  from { transform: translateY(0); }
+  to { transform: translateY(56px); }
+}
+
 /* 减少动画 (无障碍) */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
